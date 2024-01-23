@@ -7,7 +7,7 @@ const APP_ID = 52558;
 
 const AuthService = {
 
-  login: async (): Promise<any> => {
+  login: async () => {
     const params = new URLSearchParams();
     params.append('app_id', APP_ID); 
     params.append('redirect_uri', REDIRECT_URI);
