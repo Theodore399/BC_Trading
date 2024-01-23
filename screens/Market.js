@@ -27,9 +27,10 @@ const TabIndicator = ({measureLayout, scrollX}) => {
                 position: 'absolute',
                 left: 0,
                 height: '100%',
-                width: (SIZES.width - (SIZES.radius * 2)) / 2,
+                width: '50%',
                 borderRadius: SIZES.radius,
                 backgroundColor: COLORS.lightGray,
+                borderWidth: 1,
                 transform: [{
                     translateX
                 }]
@@ -132,7 +133,9 @@ const Market = ({getCoinMarket, coins}) => {
                     marginTop: SIZES.radius,
                     marginHorizontal: SIZES.radius,
                     borderRadius: SIZES.radius,
-                    backgroundColor: COLORS.gray
+                    backgroundColor: COLORS.gray,
+                    marginLeft: 25,
+                    marginRight: 25
                 }}
             >
                 <Tabs
@@ -149,7 +152,8 @@ const Market = ({getCoinMarket, coins}) => {
                 style={{
                     flexDirection: 'row',
                     marginTop: SIZES.radius,
-                    marginHorizontal: SIZES.radius
+                    marginHorizontal: SIZES.radius,
+                    marginLeft: 25
                 }}
             >
                 <TextButton
@@ -241,7 +245,7 @@ const Market = ({getCoinMarket, coins}) => {
 
                                                 <Text 
                                                     style={{
-                                                        color: COLORS.white,
+                                                        color: COLORS.black,
                                                         ...FONTS.h3,
                                                         marginLeft: SIZES.radius
                                                     }}
@@ -311,7 +315,7 @@ const Market = ({getCoinMarket, coins}) => {
             <View
                 style={{
                     flex: 1,
-                    backgroundColor: COLORS.black
+                    backgroundColor: COLORS.white
                 }}
             >
                 {/* Header */}

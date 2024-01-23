@@ -5,21 +5,21 @@ const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
 const REDIRECT_URI = 'http://localhost:3000/callback'; // Replace with your actual redirect URI
 const APP_ID = 52558;
 
-const AuthService = {
+const AuthService = () => {
 
-  login: async () => {
+  login = () => {
     const params = new URLSearchParams();
-    params.append('app_id', APP_ID); 
+    params.append('app_id', APP_ID);
     params.append('redirect_uri', REDIRECT_URI);
 
-    const authorizeUrl = `${API_BASE_URL}/authorize?${params}`;
+    const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
 
-    // Redirect the user to the authorization endpoint
-    window.location.href = authorizeUrl;
-  },
+    console.log(authorizeUrl);
+    Linking.openURL(authorizeUrl);
+  }
 
   // Handle the callback from Deriv's authorization server
-  handleCallback: async () => {
+  handleCallback = async () => {
     const { code } = new URLSearchParams(window.location.search);
 
     try {
@@ -38,8 +38,8 @@ const AuthService = {
     } catch (error) {
       throw new Error(error?.message || "Error fetching access token");
     }
-  },
+  }
 
-};
+}
 
 export default AuthService;

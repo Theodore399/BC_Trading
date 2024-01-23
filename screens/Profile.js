@@ -35,7 +35,7 @@ const Setting = ({title, value, type, onPress}) => {
                 <Text
                     style={{
                         flex: 1,
-                        color: COLORS.white,
+                        color: COLORS.black,
                         ...FONTS.h3
                     }}
                 >{title}</Text>
@@ -49,7 +49,7 @@ const Setting = ({title, value, type, onPress}) => {
                     <Text
                         style={{
                             marginRight: SIZES.radius, 
-                            color: COLORS.lightGray3, 
+                            color: COLORS.black, 
                             ...FONTS.h3
                         }}
                     >{value}</Text>
@@ -58,7 +58,7 @@ const Setting = ({title, value, type, onPress}) => {
                         style={{
                             height: 15,
                             width: 15,
-                            tintColor: COLORS.white
+                            tintColor: COLORS.black
                         }}/>
                 </View>
             </TouchableOpacity>
@@ -77,13 +77,26 @@ const Profile = () => {
                 style={{
                     flex: 1,
                     paddingHorizontal: SIZES.padding,
-                    backgroundColor: COLORS.black
+                    backgroundColor: COLORS.white
                 }}
             >
                 {/* Header */}
-                <HeaderBar
-                    title={'Profile'}
-                />
+                <View
+                style={{
+                    height: 100,
+                    paddingHorizontal: SIZES.radius,
+                    justifyContent: 'flex-end',
+                    marginTop: 13,
+                    marginLeft: -12
+                    }}
+                >
+                    <Text
+                        style={{
+                        color: COLORS.black,
+                        ...FONTS.largeTitle
+                        }}
+                    >Profile</Text>
+                </View>
 
                 {/* Details */}
                 <ScrollView>
@@ -106,14 +119,12 @@ const Profile = () => {
                             <Image
                                 source={icons.verified}
                                 style={{
-                                    marginLeft: SIZES.base,
                                     height: 25,
                                     width: 25
                                 }}
                             />
                             <Text
                                 style={{
-                                    marginLeft: SIZES.base,
                                     color: COLORS.lightGreen,
                                     ...FONTS.body4
                                 }}

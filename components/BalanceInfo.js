@@ -37,14 +37,14 @@ const BalanceInfo = ({title, displayAmount, changePct, containerStyle}) => {
                 <Text style={{
                     marginLeft: SIZES.base,
                     alignSelf: 'flex-end',
-                    color: (changePct == 0) ? COLORS.lightGray3 : (changePct > 0) ? COLORS.lightGreen : COLORS.red,
+                    color: (changePct == 0) ? COLORS.black : (changePct > 0) ? COLORS.lightGreen : COLORS.red,
                     ...FONTS.h4
                 }}>{changePct.toFixed(2)}%
                 </Text>
                 <Text style={{
                     marginLeft: SIZES.radius,
                     alignSelf: 'flex-end',
-                    color: COLORS.lightGray3,
+                    color: COLORS.black,
                     ...FONTS.h5
                 }}>7d change
                 </Text>

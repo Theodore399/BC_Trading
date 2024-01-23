@@ -34,7 +34,7 @@ function tradeTabButtonOnClickHandler() {
                 showLabel: false,
                 style: {
                     height: 80,
-                    backgroundColor: COLORS.primary,
+                    backgroundColor: COLORS.lightGray3,
                     borderTopColor: "transparent",
                 }
             }}

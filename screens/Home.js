@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
@@ -7,7 +7,48 @@ import { Main } from './';
 import { BalanceInfo, IconTextButton, Chart } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 
+{/* Deriv API */}
+const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
+
+const REDIRECT_URI = 'localhost:3000/callback'; // Replace with your actual redirect URI
+
+const APP_ID = 52558;
+
 const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
+
+    {/* AuthService */}
+    login = () => {
+        const params = new URLSearchParams();
+        params.append('app_id', APP_ID);
+        params.append('redirect_uri', REDIRECT_URI);
+    
+        const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
+    
+        console.log(authorizeUrl);
+        Linking.openURL(authorizeUrl);
+      }
+    
+      // Handle the callback from Deriv's authorization server
+      handleCallback = async () => {
+        const { code } = new URLSearchParams(window.location.search);
+    
+        try {
+          const response = await axios.post(`${API_BASE_URL}/token`, {
+            code,
+            client_id: 'your_app_id', // Replace with your app ID
+            client_secret: 'your_app_secret', // Replace with your app secret
+            redirect_uri: REDIRECT_URI,
+          });
+    
+          const authService = new Auth();
+          Auth.setToken(response.data);
+          Auth.setUser(response.data);
+    
+          return response.data;
+        } catch (error) {
+          throw new Error(error?.message || "Error fetching access token");
+        }
+      }
 
     const [selectedCoin, setSelectedCoin] = React.useState(null)
 
@@ -34,8 +75,8 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 {/* Balance Info */}
                 <Text 
                     style={{
-                        marginTop: 50, 
-                        color: COLORS.lightGray3,
+                        marginTop: 60, 
+                        color: COLORS.black,
                         ...FONTS.largeTitle
                     }}
                 >Home</Text>
@@ -84,42 +125,61 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         <Main>
             <View style={{
                 flex: 1,
-                backgroundColor: COLORS.black
+                backgroundColor: COLORS.white
             }}>
+                {/* Testing login button */}
+
+                {/*<TouchableOpacity
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 50,
+                    borderRadius: SIZES.radius,
+                    backgroundColor: COLORS.white,
+                    borderColor: COLORS.black,
+                    borderWidth: 1,
+                    marginTop: 50
+                }}
+                
+                onPress={this.login}
+                >
+                        
+                </TouchableOpacity>*/}
+                
                 {/* Header - Wallet Info */}
                 {renderWalletInfoSection()}
 
                 {/* Chart */}
-                <Chart 
-                    containerStyle={{
-                        marginTop:  SIZES.padding * 2
+                <View
+                    style={{
+                        marginTop: 50,
                     }}
-                    chartPrices={selectedCoin ? selectedCoin?.sparkline_in_7d?.price : coins[0]?.sparkline_in_7d?.price}
                 />
+
+                <View style={{marginBottom: SIZES.radius}}>
+                    <Text style={{
+                        color:COLORS.black, 
+                        ...FONTS.h3, 
+                        fontSize: 18,
+                        marginTop: -5,
+                        marginLeft: 25
+                    }}
+                    >Popular Cryptocurrencies</Text>
+                </View>
 
                 {/* Top Popular Cryptocurrency */}
                 <FlatList
                     data={coins}
                     keyExtractor={item => item.id}
                     contentContainerStyle={{
-                        marginTop: 30,
                         paddingHorizontal: SIZES.padding
                     }}
-                    ListHeaderComponent={
-                        <View style={{marginBottom: SIZES.radius}}>
-                            <Text style={{
-                                color:COLORS.white, 
-                                ...FONTS.h3, 
-                                fontSize: 18
-                                }}
-                            >Popular Cryptocurrencies</Text>
-                        </View>
-                    }
                     renderItem={({item}) => {
 
                         let priceColor = (item.
                             price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.lightGray3 : (item.
+                            ? COLORS.black : (item.
                                 price_change_percentage_7d_in_currency > 0)
                                 ? COLORS.lightGreen : COLORS.red
 
@@ -147,7 +207,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                                 <View style={{flex: 1}}>
                                     <Text 
                                         style={{
-                                            color: COLORS.white,
+                                            color: COLORS.black,
                                             ...FONTS.h3
                                         }}>{item.name}
                                     </Text>
@@ -157,7 +217,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                                 <View>
                                     <Text style={{
                                         textAlign: 'right',
-                                        color: COLORS.white,
+                                        color: COLORS.black,
                                         ...FONTS.h5,
                                         lineHeight: 15
                                         }}

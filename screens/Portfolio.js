@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { getHoldings } from '../stores/market/marketActions';
 import { Main } from './';
-import { BalanceInfo, Chart } from '../components';
+import { BalanceInfo} from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 
 const Portfolio = ({getHoldings, myHoldings}) => {
@@ -33,8 +33,8 @@ const Portfolio = ({getHoldings, myHoldings}) => {
             >
                 <Text 
                     style={{
-                        marginTop: 50, 
-                        color: COLORS.lightGray3,
+                        marginTop: 60, 
+                        color: COLORS.black,
                         ...FONTS.largeTitle
                     }}
                 >Portfolio</Text>
@@ -58,26 +58,18 @@ const Portfolio = ({getHoldings, myHoldings}) => {
             <View
                 style={{
                     flex: 1,
-                    backgroundColor: COLORS.black
+                    backgroundColor: COLORS.white
                 }}
             >
                 {/* Header - Current balance */}
                 {renderCurrentBalanceSection()}
-
-                {/* Chart */}
-                <Chart 
-                    containerStyle={{
-                        marginTop:  SIZES.radius
-                    }}
-                    chartPrices={selectedCoin ? selectedCoin?.sparkline_in_7d?.value : myHoldings[0]?.sparkline_in_7d?.value}
-                />
 
                 {/* Your Assets */}
                 <FlatList
                     data={myHoldings}
                     keyExtractor={item => item.id}
                     contentContainerStyle={{
-                        marginTop: SIZES.padding,
+                        marginTop: -(SIZES.padding),
                         paddingHorizontal: SIZES.padding
                     }}
                     ListHeaderComponent={
@@ -99,20 +91,20 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                             <Text 
                                 style={{
                                     flex: 1, 
-                                    color: COLORS.lightGray3
+                                    color: COLORS.black
                                 }}
                             >Assets</Text>
                             <Text 
                                 style={{
                                     flex: 1, 
-                                    color: COLORS.lightGray3,
+                                    color: COLORS.black,
                                     textAlign: 'right'
                                 }}
                             >Price</Text>
                             <Text 
                                 style={{
                                     flex: 1,
-                                    color: COLORS.lightGray3,
+                                    color: COLORS.black,
                                     textAlign: 'right'
                                 }}
                             >Holdings</Text>
@@ -123,7 +115,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
 
                         let priceColor = (item.
                             price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.lightGray3 : (item.
+                            ? COLORS.black : (item.
                                 price_change_percentage_7d_in_currency > 0)
                                 ? COLORS.lightGreen : COLORS.red
 
@@ -154,7 +146,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                     <Text
                                         style={{
                                             marginLeft: SIZES.radius,
-                                            color: COLORS.white,
+                                            color: COLORS.black,
                                             ...FONTS.h4
                                         }}
                                     >{item.name}</Text>
@@ -169,7 +161,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                 >
                                     <Text 
                                         style={{
-                                            color: COLORS.white,
+                                            color: COLORS.black,
                                             ...FONTS.h5,
                                             textAlign: 'right',
                                             lineHeight: 15
@@ -216,7 +208,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                     <Text 
                                         style={{
                                             textAlign: 'right',
-                                            color: COLORS.white,
+                                            color: COLORS.black,
                                             ...FONTS.h5,
                                             lineHeight: 15
                                         }}
