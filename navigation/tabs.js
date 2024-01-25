@@ -3,7 +3,7 @@ import { TouchableOpacity} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-import { Home, Portfolio, Market, Profile } from "../screens"
+import { Home, Portfolio, Market, Profile, Currency } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
@@ -87,7 +87,7 @@ function tradeTabButtonOnClickHandler() {
                     }
                 }}
             />
-            <Tab.Screen
+            {/*<Tab.Screen
                 name="Trade"
                 component={Home}
                 options={{
@@ -112,7 +112,7 @@ function tradeTabButtonOnClickHandler() {
                         />
                     )
                 }}
-            />
+            /> */}
             <Tab.Screen
                 name="Market"
                 component={Market}
@@ -138,16 +138,21 @@ function tradeTabButtonOnClickHandler() {
                 }}
             />
             <Tab.Screen
-                name="Profile"
-                component={Profile}
+                name="Currency"
+                component={Currency}
                 options={{
                     tabBarIcon: ({focused}) => {
                         if (!isTradeModelVisible) {
                             return (
                                 <TabIcon 
                                     focused={focused}
-                                    icon={icons.profile}
-                                    label='Profile'
+                                    icon={isTradeModelVisible ? icons.close : icons.trade}
+                                    iconStyle={isTradeModelVisible ? {
+                                        width: 10,
+                                        height: 10
+                                    } : null}
+                                    label='Trade'
+                                    isTrade={true}
                                 />
                             )
                         }

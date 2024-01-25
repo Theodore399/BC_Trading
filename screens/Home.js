@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
 import { Main } from './';
+import { Detail } from './';
 import { BalanceInfo, IconTextButton, Chart } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
+import { WebView } from 'react-native-webview';
+import { ScrollView } from 'react-native-gesture-handler';
 
 {/* Deriv API */}
 const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
@@ -27,28 +30,57 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         console.log(authorizeUrl);
         Linking.openURL(authorizeUrl);
       }
+
+      handle = ({item}) => {
+        setSelectedCoin(item);
+        console.log('Hello there');
+      }
+
+      function handleImage () {
+        return (
+            <WebView
+                source={{uri: 'https://www.tradingview.com/?utm_source=www.tradingview.com&utm_medium=widget_new&utm_campaign=advanced-chart#main-market-summary'}}
+                style={{
+                    flex: 1,
+                    marginTop: 0,
+                    marginBottom: -3170
+                }}
+                allowFileAccessFromFileURLs={true}
+                domStorageEnabled={true}
+                allowFileAccess={true}
+                allowUniversalAccessFromFileURLs={true}
+                originWhitelist={['*']}
+                onShouldStartLoadWithRequest={() => true}/>
+        )
+      }
     
-      // Handle the callback from Deriv's authorization server
-      handleCallback = async () => {
+    // Handle the callback from Deriv's authorization server
+    handleCallback = async () => {
         const { code } = new URLSearchParams(window.location.search);
     
         try {
-          const response = await axios.post(`${API_BASE_URL}/token`, {
-            code,
-            client_id: 'your_app_id', // Replace with your app ID
-            client_secret: 'your_app_secret', // Replace with your app secret
-            redirect_uri: REDIRECT_URI,
-          });
+            const response = await axios.post(`${API_BASE_URL}/token`, {
+                code,
+                client_id: 'your_app_id', // Replace with your app ID
+                client_secret: 'your_app_secret', // Replace with your app secret
+                redirect_uri: REDIRECT_URI,
+            });
     
-          const authService = new Auth();
-          Auth.setToken(response.data);
-          Auth.setUser(response.data);
+            const authService = new Auth();
+            Auth.setToken(response.data);
+            Auth.setUser(response.data);
     
-          return response.data;
+            return response.data;
         } catch (error) {
-          throw new Error(error?.message || "Error fetching access token");
+            throw new Error(error?.message || "Error fetching access token");
         }
-      }
+    }
+
+    {/* Detail Page */}
+    handleDetail = () => {
+        Detail()
+        console.log('Detail Page')
+    }
 
     const [selectedCoin, setSelectedCoin] = React.useState(null)
 
@@ -146,6 +178,18 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 >
                         
                 </TouchableOpacity>*/}
+
+                {/*<WebView
+                source={{uri: 'https://www.tradingview.com/widget/advanced-chart/'}}
+                style={{
+                    flex: 1
+                }}
+                allowFileAccessFromFileURLs={true}
+                domStorageEnabled={true}
+                allowFileAccess={true}
+                allowUniversalAccessFromFileURLs={true}
+                originWhitelist={['*']}
+                onShouldStartLoadWithRequest={() => true}/>*/}
                 
                 {/* Header - Wallet Info */}
                 {renderWalletInfoSection()}
@@ -153,115 +197,17 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 {/* Chart */}
                 <View
                     style={{
-                        marginTop: 50,
+                        marginTop: 30,
+                        marginBottom: 80,
+                        height: 367,
+                        width: SIZES.width
                     }}
-                />
-
-                <View style={{marginBottom: SIZES.radius}}>
-                    <Text style={{
-                        color:COLORS.black, 
-                        ...FONTS.h3, 
-                        fontSize: 18,
-                        marginTop: -5,
-                        marginLeft: 25
-                    }}
-                    >Popular Cryptocurrencies</Text>
+                >
+                    {handleImage()}
                 </View>
 
                 {/* Top Popular Cryptocurrency */}
-                <FlatList
-                    data={coins}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={{
-                        paddingHorizontal: SIZES.padding
-                    }}
-                    renderItem={({item}) => {
-
-                        let priceColor = (item.
-                            price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.black : (item.
-                                price_change_percentage_7d_in_currency > 0)
-                                ? COLORS.lightGreen : COLORS.red
-
-                        return (
-                            <TouchableOpacity 
-                                style={{
-                                    height: 55,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                                onPress={() => setSelectedCoin(item)}
-                            >
-                                {/* Logo */}
-                                <View style={{width: 35}}>
-                                    <Image
-                                        source={{uri: item.image}}
-                                        style={{
-                                            height: 20,
-                                            width: 20
-                                        }}/>
-                                </View>
-
-                                {/* Name */}
-                                <View style={{flex: 1}}>
-                                    <Text 
-                                        style={{
-                                            color: COLORS.black,
-                                            ...FONTS.h3
-                                        }}>{item.name}
-                                    </Text>
-                                </View>
-
-                                {/* Figures */}
-                                <View>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        color: COLORS.black,
-                                        ...FONTS.h5,
-                                        lineHeight: 15
-                                        }}
-                                    >$ {item.current_price}</Text>
-                                    <View 
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-end'
-                                        }}
-                                    >
-                                        {
-                                            item.price_change_percentage_7d_in_currency != 0 &&
-                                            <Image
-                                                source={icons.upArrow}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    tintColor: priceColor,
-                                                    transform: item.price_change_percentage_7d_in_currency > 0 ? [{rotate: '45deg'}] : [{rotate: '125deg'}]
-                                                }}
-                                            />
-                                        }
-                                        <Text
-                                            style={{
-                                                marginLeft: 5,
-                                                color: priceColor,
-                                                ...FONTS.body5,
-                                                lineHeight: 15
-                                            }}
-                                        >{item.price_change_percentage_7d_in_currency.toFixed(2)}%</Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    }}
-                    ListFooterComponent={
-                        <View
-                            style={{
-                                marginBottom: 50
-                            }}
-                        />
-                    }
-                />
+                
             </View>
         </Main>
     )

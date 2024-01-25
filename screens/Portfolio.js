@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { getHoldings } from '../stores/market/marketActions';
 import { Main } from './';
-import { BalanceInfo} from '../components';
+import { BalanceInfo, Chart} from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 
 const Portfolio = ({getHoldings, myHoldings}) => {
@@ -63,6 +63,8 @@ const Portfolio = ({getHoldings, myHoldings}) => {
             >
                 {/* Header - Current balance */}
                 {renderCurrentBalanceSection()}
+
+                {/* Chart */}
 
                 {/* Your Assets */}
                 <FlatList
