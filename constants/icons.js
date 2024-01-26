@@ -9,6 +9,11 @@ const trade = require("../assets/icons/trade.png")
 const upArrow = require("../assets/icons/up-arrow.png")
 const verified = require("../assets/icons/verified.png")
 const withdraw = require("../assets/icons/withdraw.png")
+const deposit = require("../assets/icons/deposit.png")
+const chart = require("../assets/icons/chart.png")
+const portfolio = require("../assets/icons/portfolio.png")
+const buy = require("../assets/icons/buy.png")
+const sell = require("../assets/icons/sell.png")
 
 export default {
     briefcase,
@@ -22,4 +27,9 @@ export default {
     upArrow,
     verified,
     withdraw,
+    chart,
+    portfolio,
+    deposit,
+    buy,
+    sell,
 }

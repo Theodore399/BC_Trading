@@ -9,6 +9,7 @@ import { BalanceInfo, IconTextButton, Chart } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 import { WebView } from 'react-native-webview';
 import { ScrollView } from 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
 
 {/* Deriv API */}
 const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
@@ -36,7 +37,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         console.log('Hello there');
       }
 
-      function handleImage () {
+      function handleView () {
         return (
             <WebView
                 source={{uri: 'https://www.tradingview.com/?utm_source=www.tradingview.com&utm_medium=widget_new&utm_campaign=advanced-chart#main-market-summary'}}
@@ -101,14 +102,14 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 paddingHorizontal: SIZES.padding,
                 borderBottomLeftRadius: 25,
                 borderBottomRightRadius: 25,
-                backgroundColor: COLORS.white
+                backgroundColor: COLORS.black
                 }}
             >
                 {/* Balance Info */}
                 <Text 
                     style={{
                         marginTop: 60, 
-                        color: COLORS.black,
+                        color: COLORS.white,
                         ...FONTS.largeTitle
                     }}
                 >Home</Text>
@@ -131,13 +132,13 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 >
                     <IconTextButton
                         label='Deposit'
-                        icon={icons.send}
+                        icon={icons.deposit}
                         containerStyle={{
                             flex: 1,
                             height: 40,
                             marginRight: SIZES.radius
                         }}
-                        onPress={() => console.log('Deposit')}
+                        onPress={() => console.log('Transaction Complete')}
                     />
                     <IconTextButton
                         label='Withdraw'
@@ -146,7 +147,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                             flex: 1,
                             height: 40
                         }}
-                        onPress={() => console.log('Withdraw')}
+                        onPress={() => console.log('Transaction Complete')}
                     />
                 </View>
             </View>
@@ -157,8 +158,11 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         <Main>
             <View style={{
                 flex: 1,
-                backgroundColor: COLORS.white
+                backgroundColor: COLORS.black
             }}>
+                {/* Status Bar */}
+                <StatusBar backgroundColor={"black"} style="light" />
+
                 {/* Testing login button */}
 
                 {/*<TouchableOpacity
@@ -203,7 +207,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                         width: SIZES.width
                     }}
                 >
-                    {handleImage()}
+                    {handleView()}
                 </View>
 
                 {/* Top Popular Cryptocurrency */}

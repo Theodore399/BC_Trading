@@ -209,11 +209,11 @@ const Market = ({getCoinMarket, coins}) => {
                             <FlatList
                                 data={coins}
                                 keyExtractor={item => item.id}
-                                renderItem={({item, index}) => {
+                                renderItem={({item}) => {
 
                                     let priceColor = (item.
                                         price_change_percentage_7d_in_currency == 0)
-                                        ? COLORS.lightGray3 : (item.
+                                        ? COLORS.white : (item.
                                             price_change_percentage_7d_in_currency > 0)
                                             ? COLORS.lightGreen : COLORS.red
 
@@ -245,7 +245,7 @@ const Market = ({getCoinMarket, coins}) => {
 
                                                 <Text 
                                                     style={{
-                                                        color: COLORS.black,
+                                                        color: COLORS.white,
                                                         ...FONTS.h3,
                                                         marginLeft: SIZES.radius
                                                     }}
@@ -315,7 +315,7 @@ const Market = ({getCoinMarket, coins}) => {
             <View
                 style={{
                     flex: 1,
-                    backgroundColor: COLORS.white
+                    backgroundColor: COLORS.black
                 }}
             >
                 {/* Header */}

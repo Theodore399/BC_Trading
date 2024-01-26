@@ -15,7 +15,7 @@ const HeaderBar = ({title}) => {
         >
             <Text
                 style={{
-                    color: COLORS.black,
+                    color: COLORS.white,
                     ...FONTS.largeTitle
                 }}>{title}</Text>
         </View>

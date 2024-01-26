@@ -9318,6 +9318,11 @@ react-native-wagmi-charts@^2.3.2:
     react-keyed-flatten-children "^1.3.0"
     react-native-redash "^16.1.1"
 
+react-native-webview-landscape-fullscreen@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-webview-landscape-fullscreen/-/react-native-webview-landscape-fullscreen-1.0.7.tgz#31ca99cbf498fcc29fee34ec29482fde1e181c52"
+  integrity sha512-FNuXcQ8vO+b7xSy/+g8LOBVzsvHN7sFx571GLgIPR75k1L/wsoQf+8ACjFdW4w+ucpyhRQNKyehpcux3jHqrKQ==
+
 react-native-webview@13.2.2:
   version "13.2.2"
   resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-13.2.2.tgz#06b04db8e1f4ed57a9dc92f4094aa0e41271b89b"

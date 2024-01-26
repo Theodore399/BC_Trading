@@ -1,16 +1,27 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
+import { useState } from 'react';
 import { Main } from './';
-import { BalanceInfo, Chart} from '../components';
+import { IconTextButton } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 
-const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelVisibility, isTradeModelVisible}) => {
+const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
 
-    const [selectedCoin, setSelectedCoin] = React.useState(null)
+    const [isVisible, setIsVisible] = React.useState(false);
+
+    const [selectedCoin, setSelectedCoin] = React.useState(null);
+
+    const handleOpenPopup = () => {
+        setIsVisible(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsVisible(false);
+    };
 
     useFocusEffect(
         React.useCallback(() => {
@@ -30,29 +41,25 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                     paddingHorizontal: SIZES.padding,
                     borderBottomLeftRadius: 25,
                     borderBottomRightRadius: 25,
-                    backgroundColor: COLORS.white
+                    backgroundColor: COLORS.black
                 }}
             >
                 <Text 
                     style={{
                         marginTop: 60, 
-                        color: COLORS.black,
+                        color: COLORS.white,
                         ...FONTS.largeTitle
                     }}
                 >Trade</Text>
             </View>
         )
-    }
-
-    function tradeTabButtonOnClickHandler() {
-        setTradeModelVisibility(!isTradeModelVisible)
-    }
+    };
 
     return (
         <Main>
             <View style={{
                 flex: 1,
-                backgroundColor: COLORS.white
+                backgroundColor: COLORS.black
             }}>
                 {/* Header */}
                 {renderHeader()}
@@ -76,7 +83,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                     ListHeaderComponent={
                         <View style={{marginBottom: SIZES.radius}}>
                             <Text style={{
-                                color:COLORS.black, 
+                                color:COLORS.white, 
                                 ...FONTS.h3, 
                                 fontSize: 18
                                 }}
@@ -87,7 +94,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
 
                         let priceColor = (item.
                             price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.lightGray3 : (item.
+                            ? COLORS.white : (item.
                                 price_change_percentage_7d_in_currency > 0)
                                 ? COLORS.lightGreen : COLORS.red
 
@@ -99,7 +106,10 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                                     alignItems: 'center',
                                     justifyContent: 'center'
                                 }}
-                                onPress={() => tradeTabButtonOnClickHandler()}
+                                onPress={() => (
+                                    (console.log('You have selected', (item.name))),
+                                    handleOpenPopup()
+                                )}
                             >
                                 {/* Logo */}
                                 <View style={{width: 35}}>
@@ -115,7 +125,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                                 <View style={{flex: 1}}>
                                     <Text 
                                         style={{
-                                            color: COLORS.black,
+                                            color: COLORS.white,
                                             ...FONTS.h3
                                         }}>{item.name}
                                     </Text>
@@ -125,7 +135,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                                 <View>
                                     <Text style={{
                                         textAlign: 'right',
-                                        color: COLORS.black,
+                                        color: COLORS.white,
                                         ...FONTS.h5,
                                         lineHeight: 15
                                         }}
@@ -160,6 +170,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                                     </View>
                                 </View>
                             </TouchableOpacity>
+                            
                         )
                     }}
                     ListFooterComponent={
@@ -170,6 +181,68 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, setTradeModelV
                         />
                     }
                 />
+
+                {/* Modal */}
+                <Modal 
+                    visible={isVisible}
+                    transparent={true}
+                    animationType={'fade'}>
+                    <TouchableOpacity
+                        style={{
+                            flex: 1,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                        activeOpacity={1}
+                        onPress={handleClosePopup}
+                    >
+                        {/* Popup Container */}
+                        <View
+                            style={{
+                                backgroundColor: COLORS.transparentBlack,
+                                padding: 20,
+                                borderRadius: SIZES.radius,
+                                alignItems: 'center',
+                                width: '100%'
+                            }}
+                        >
+                            {/* Title */}
+                            <Text 
+                                style={{
+                                    color: COLORS.white,
+                                    ...FONTS.h3,
+                                    marginBottom: 20
+                                }}>Choose:
+                            </Text>
+
+                            {/* Buttons */}
+                            <IconTextButton
+                                label='Buy'
+                                icon={icons.buy}
+                                containerStyle={{
+                                    width: 300
+                                }}
+                                onPress={() => (
+                                    (console.log('Bought Successfully')),
+                                    handleClosePopup()
+                                )}
+                            />
+                            <IconTextButton
+                                label='Sell'
+                                icon={icons.sell}
+                                containerStyle={{
+                                    marginTop: SIZES.base,
+                                    width: 300
+                                }}
+                                onPress={() => (
+                                    (console.log('Sold Successfully')),
+                                    handleClosePopup()
+                                )}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
             </View>
         </Main>
     )

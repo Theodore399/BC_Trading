@@ -28,13 +28,13 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                     paddingHorizontal: SIZES.padding,
                     borderBottomLeftRadius: 25,
                     borderBottomRightRadius: 25,
-                    backgroundColor: COLORS.white
+                    backgroundColor: COLORS.black
                 }}
             >
                 <Text 
                     style={{
                         marginTop: 60, 
-                        color: COLORS.black,
+                        color: COLORS.white,
                         ...FONTS.largeTitle
                     }}
                 >Portfolio</Text>
@@ -58,7 +58,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
             <View
                 style={{
                     flex: 1,
-                    backgroundColor: COLORS.white
+                    backgroundColor: COLORS.black
                 }}
             >
                 {/* Header - Current balance */}
@@ -79,7 +79,8 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                             {/* Section Title */}
                             <Text style={{
                                 color:COLORS.white, 
-                                ...FONTS.h2
+                                ...FONTS.h2,
+                                marginTop: 50,
                                 }}
                             >Your Assets</Text>
 
@@ -93,20 +94,20 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                             <Text 
                                 style={{
                                     flex: 1, 
-                                    color: COLORS.black
+                                    color: COLORS.white
                                 }}
                             >Assets</Text>
                             <Text 
                                 style={{
                                     flex: 1, 
-                                    color: COLORS.black,
+                                    color: COLORS.white,
                                     textAlign: 'right'
                                 }}
                             >Price</Text>
                             <Text 
                                 style={{
                                     flex: 1,
-                                    color: COLORS.black,
+                                    color: COLORS.white,
                                     textAlign: 'right'
                                 }}
                             >Holdings</Text>
@@ -117,7 +118,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
 
                         let priceColor = (item.
                             price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.black : (item.
+                            ? COLORS.transparentWhite : (item.
                                 price_change_percentage_7d_in_currency > 0)
                                 ? COLORS.lightGreen : COLORS.red
 
@@ -210,7 +211,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                     <Text 
                                         style={{
                                             textAlign: 'right',
-                                            color: COLORS.black,
+                                            color: COLORS.white,
                                             ...FONTS.h5,
                                             lineHeight: 15
                                         }}

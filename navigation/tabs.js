@@ -3,7 +3,7 @@ import { TouchableOpacity} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-import { Home, Portfolio, Market, Profile, Currency } from "../screens"
+import { Home, Portfolio, Market, Graph, Currency } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
@@ -44,23 +44,14 @@ function tradeTabButtonOnClickHandler() {
                 component={Home}
                 options={{
                     tabBarIcon: ({focused}) => {
-                        if (!isTradeModelVisible) {
-                            return (
-                                <TabIcon 
-                                    focused={focused}
-                                    icon={icons.home}
-                                    label='Home'
-                                />
-                            )
-                        }
+                        return (
+                            <TabIcon 
+                                focused={focused}
+                                icon={icons.home}
+                                label='Home'
+                            />
+                        )
                     } 
-                }}
-                listeners={{
-                    tabPress: e => {
-                        if (isTradeModelVisible) {
-                            e.preventDefault()
-                        }
-                    }
                 }}
             />
             <Tab.Screen
@@ -68,73 +59,14 @@ function tradeTabButtonOnClickHandler() {
                 component={Portfolio}
                 options={{
                     tabBarIcon: ({focused}) => {
-                        if (!isTradeModelVisible) {
-                            return (
-                                <TabIcon 
-                                    focused={focused}
-                                    icon={icons.briefcase}
-                                    label='Portfolio'
-                                />
-                            )
-                        }
-                    } 
-                }}
-                listeners={{
-                    tabPress: e => {
-                        if (isTradeModelVisible) {
-                            e.preventDefault()
-                        }
-                    }
-                }}
-            />
-            {/*<Tab.Screen
-                name="Trade"
-                component={Home}
-                options={{
-                    tabBarIcon: ({focused}) => {
                         return (
                             <TabIcon 
                                 focused={focused}
-                                icon={isTradeModelVisible ? icons.close : icons.trade}
-                                iconStyle={isTradeModelVisible ? {
-                                    width: 10,
-                                    height: 10
-                                } : null}
-                                label='Trade'
-                                isTrade={true}
+                                icon={icons.portfolio}
+                                label='Portfolio'
                             />
                         )
-                    },
-                    tabBarButton: (props) => (
-                        <TabBarCustomButton
-                            {...props}
-                            onPress={() => tradeTabButtonOnClickHandler()}
-                        />
-                    )
-                }}
-            /> */}
-            <Tab.Screen
-                name="Market"
-                component={Market}
-                options={{
-                    tabBarIcon: ({focused}) => {
-                        if (!isTradeModelVisible) {
-                            return (
-                                <TabIcon 
-                                    focused={focused}
-                                    icon={icons.market}
-                                    label='Market'
-                                />
-                            )
-                        }
                     } 
-                }}
-                listeners={{
-                    tabPress: e => {
-                        if (isTradeModelVisible) {
-                            e.preventDefault()
-                        }
-                    }
                 }}
             />
             <Tab.Screen
@@ -142,28 +74,45 @@ function tradeTabButtonOnClickHandler() {
                 component={Currency}
                 options={{
                     tabBarIcon: ({focused}) => {
-                        if (!isTradeModelVisible) {
-                            return (
-                                <TabIcon 
-                                    focused={focused}
-                                    icon={isTradeModelVisible ? icons.close : icons.trade}
-                                    iconStyle={isTradeModelVisible ? {
-                                        width: 10,
-                                        height: 10
-                                    } : null}
-                                    label='Trade'
-                                    isTrade={true}
-                                />
-                            )
-                        }
-                    } 
+                        return (
+                            <TabIcon 
+                                focused={focused}
+                                icon={icons.trade}
+                                label='Trade'
+                                isTrade={true}
+                            />
+                        )
+                    },
                 }}
-                listeners={{
-                    tabPress: e => {
-                        if (isTradeModelVisible) {
-                            e.preventDefault()
-                        }
-                    }
+            />
+            <Tab.Screen
+                name="Market"
+                component={Market}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                            <TabIcon 
+                                focused={focused}
+                                icon={icons.market}
+                                label='Market'
+                            />
+                        )
+                    },
+                }}
+            />
+            <Tab.Screen
+                name="Graph"
+                component={Graph}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                            <TabIcon 
+                                focused={focused}
+                                icon={icons.chart}
+                                label='Chart'
+                            />
+                        )
+                    },
                 }}
             />
         </Tab.Navigator>

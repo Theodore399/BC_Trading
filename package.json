@@ -41,6 +41,7 @@
     "react-native-svg": "13.9.0",
     "react-native-wagmi-charts": "^2.3.2",
     "react-native-webview": "13.2.2",
+    "react-native-webview-landscape-fullscreen": "^1.0.7",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
