@@ -219,7 +219,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                             {/* Buttons */}
                             <IconTextButton
                                 label='Buy'
-                                icon={icons.buy}
+                                icon={icons.sell}
                                 containerStyle={{
                                     width: 300
                                 }}
@@ -230,7 +230,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                             />
                             <IconTextButton
                                 label='Sell'
-                                icon={icons.sell}
+                                icon={icons.buy}
                                 containerStyle={{
                                     marginTop: SIZES.base,
                                     width: 300
