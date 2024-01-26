@@ -73,23 +73,25 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 />*/}
 
                 {/* Top Popular Cryptocurrency */}
-                <FlatList
-                    data={coins}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={{
-                        marginTop: 30,
-                        paddingHorizontal: SIZES.padding
-                    }}
-                    ListHeaderComponent={
-                        <View style={{marginBottom: SIZES.radius}}>
+
+                <View style={{marginBottom: SIZES.radius}}>
                             <Text style={{
                                 color:COLORS.white, 
-                                ...FONTS.h3, 
+                                ...FONTS.h3,
+                                marginTop: 30,
+                                marginLeft: 25,
+                                marginRight: 25, 
                                 fontSize: 18
                                 }}
                             >Please select the currency you want to trade with below:</Text>
                         </View>
-                    }
+
+                <FlatList
+                    data={coins}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={{
+                        paddingHorizontal: SIZES.padding
+                    }}
                     renderItem={({item}) => {
 
                         let priceColor = (item.

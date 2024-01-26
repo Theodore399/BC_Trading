@@ -14,6 +14,8 @@ const chart = require("../assets/icons/chart.png")
 const portfolio = require("../assets/icons/portfolio.png")
 const buy = require("../assets/icons/buy.png")
 const sell = require("../assets/icons/sell.png")
+const update = require("../assets/icons/update.png")
+const change = require("../assets/icons/change.png")
 
 export default {
     briefcase,
@@ -32,4 +34,6 @@ export default {
     deposit,
     buy,
     sell,
+    update,
+    change,
 }

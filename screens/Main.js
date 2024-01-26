@@ -3,7 +3,6 @@ import { View, Animated } from 'react-native';
 import { connect } from "react-redux";
 import { IconTextButton } from "../components";
 import { COLORS, SIZES, icons } from "../constants";
-import { useNavigation } from "@react-navigation/native";
 
 const Main = ({children, isTradeModelVisible}) => {
 

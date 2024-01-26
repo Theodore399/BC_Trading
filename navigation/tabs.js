@@ -1,32 +1,14 @@
 import React from "react";
-import { TouchableOpacity} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-import { Home, Portfolio, Market, Graph, Currency } from "../screens"
+import { Home, Portfolio, Graph, Currency, Profile } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
 const Tab = createBottomTabNavigator()
 
-const TabBarCustomButton = ({children, onPress}) => {
-    return (
-        <TouchableOpacity
-            style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}
-            onPress={onPress}
-        >{children}</TouchableOpacity>
-    )
-}
-
-const Tabs = ({setTradeModelVisibility, isTradeModelVisible}) => {
-
-function tradeTabButtonOnClickHandler() {
-    setTradeModelVisibility(!isTradeModelVisible)
-}
+const Tabs = () => {
 
     return (
         <Tab.Navigator
@@ -86,21 +68,6 @@ function tradeTabButtonOnClickHandler() {
                 }}
             />
             <Tab.Screen
-                name="Market"
-                component={Market}
-                options={{
-                    tabBarIcon: ({focused}) => {
-                        return (
-                            <TabIcon 
-                                focused={focused}
-                                icon={icons.market}
-                                label='Market'
-                            />
-                        )
-                    },
-                }}
-            />
-            <Tab.Screen
                 name="Graph"
                 component={Graph}
                 options={{
@@ -110,6 +77,22 @@ function tradeTabButtonOnClickHandler() {
                                 focused={focused}
                                 icon={icons.chart}
                                 label='Chart'
+                            />
+                        )
+                    },
+                }}
+            />
+
+            <Tab.Screen
+                name="Profile"
+                component={Profile}
+                options={{
+                    tabBarIcon: ({focused}) => {
+                        return (
+                            <TabIcon 
+                                focused={focused}
+                                icon={icons.profile}
+                                label='Profile'
                             />
                         )
                     },

@@ -13,5 +13,5 @@ export {
     Market,
     Profile,
     Currency,
-    Graph
+    Graph,
 }

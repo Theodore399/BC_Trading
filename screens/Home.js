@@ -1,21 +1,18 @@
-import React, { Component } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, Linking } from 'react-native';
+import React from 'react';
+import { View, Text, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
 import { Main } from './';
 import { Detail } from './';
-import { BalanceInfo, IconTextButton, Chart } from '../components';
+import { BalanceInfo, IconTextButton } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 import { WebView } from 'react-native-webview';
-import { ScrollView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 
 {/* Deriv API */}
 const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
-
 const REDIRECT_URI = 'localhost:3000/callback'; // Replace with your actual redirect URI
-
 const APP_ID = 52558;
 
 const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
@@ -83,7 +80,7 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         console.log('Detail Page')
     }
 
-    const [selectedCoin, setSelectedCoin] = React.useState(null)
+    const [setSelectedCoin] = React.useState(null)
 
     useFocusEffect(
         React.useCallback(() => {
@@ -162,43 +159,11 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
             }}>
                 {/* Status Bar */}
                 <StatusBar backgroundColor={"black"} style="light" />
-
-                {/* Testing login button */}
-
-                {/*<TouchableOpacity
-                style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 50,
-                    borderRadius: SIZES.radius,
-                    backgroundColor: COLORS.white,
-                    borderColor: COLORS.black,
-                    borderWidth: 1,
-                    marginTop: 50
-                }}
-                
-                onPress={this.login}
-                >
-                        
-                </TouchableOpacity>*/}
-
-                {/*<WebView
-                source={{uri: 'https://www.tradingview.com/widget/advanced-chart/'}}
-                style={{
-                    flex: 1
-                }}
-                allowFileAccessFromFileURLs={true}
-                domStorageEnabled={true}
-                allowFileAccess={true}
-                allowUniversalAccessFromFileURLs={true}
-                originWhitelist={['*']}
-                onShouldStartLoadWithRequest={() => true}/>*/}
                 
                 {/* Header - Wallet Info */}
                 {renderWalletInfoSection()}
 
-                {/* Chart */}
+                {/* Trading View */}
                 <View
                     style={{
                         marginTop: 30,
@@ -209,9 +174,6 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 >
                     {handleView()}
                 </View>
-
-                {/* Top Popular Cryptocurrency */}
-                
             </View>
         </Main>
     )

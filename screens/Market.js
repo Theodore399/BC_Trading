@@ -1,12 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, FlatList, Animated, Image } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
 import { connect } from 'react-redux';
 import { getCoinMarket } from '../stores/market/marketActions';
 import { Main } from './';
 import { HeaderBar, TextButton } from '../components';
 import { constants, COLORS, FONTS, SIZES, icons } from '../constants';
-import { measure } from 'react-native-reanimated';
 
 const marketTabs = constants.marketTabs.map((marketTab) => ({
     ...marketTab,
