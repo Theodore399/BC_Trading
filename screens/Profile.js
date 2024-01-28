@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, } from 'react-native';
 import { Main } from './';
 import { IconTextButton, } from '../components';
 import { HeaderBar, } from '../components';
 import { SIZES, COLORS, FONTS,  icons } from '../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Profile = ({ containerStyle }) => {
+const Profile = ({ containerStyle, navigation }) => {
+
+  // Function to check user token
+    const checkUserToken = async () => {
+        const userToken = await AsyncStorage.getItem('@UserToken:key');
+        if (userToken) {
+        console.log(`User is logged in with token: ${userToken}`);
+        // User is logged in, you can put additional logic here if needed
+        } else {
+        console.log('User is not logged in');
+        // Navigate to Login screen
+        navigation.navigate('Login');
+        }
+    };
+
+    useEffect(() => {
+        checkUserToken();
+    }, []);
 
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
