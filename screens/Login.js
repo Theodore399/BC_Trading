@@ -3,6 +3,9 @@ import { View } from 'react-native';
 import { Main } from './';
 import { COLORS } from '../constants';
 import { WebView } from 'react-native-webview';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 {/* Deriv API */}
 const APP_ID = 52558
@@ -11,7 +14,7 @@ const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
 TOKEN = '';
 USER = '';
 
-const Login = () => {
+const Login = ({ navigation }) => {
 
     _storeToken = async (token) =>  {
         await AsyncStorage.setItem(
