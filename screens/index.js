@@ -5,6 +5,8 @@ import Market from "./Market"
 import Profile from "./Profile"
 import Currency from "./Currency"
 import Graph from "./Graph"
+import Login from "./Login"
+
 
 export {
     Main,
@@ -14,4 +16,5 @@ export {
     Profile,
     Currency,
     Graph,
+    Login
 }
