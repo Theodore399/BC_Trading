@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Linking } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,25 +9,32 @@ import { BalanceInfo, IconTextButton } from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 import { WebView } from 'react-native-webview';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 {/* Deriv API */}
 const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
 const REDIRECT_URI = 'localhost:3000/callback'; // Replace with your actual redirect URI
 const APP_ID = 52558;
 
-const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
+const Home = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) => {
 
-    {/* AuthService */}
-    login = () => {
-        const params = new URLSearchParams();
-        params.append('app_id', APP_ID);
-        params.append('redirect_uri', REDIRECT_URI);
-    
-        const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
-    
-        console.log(authorizeUrl);
-        Linking.openURL(authorizeUrl);
-      }
+    // Function to check user token
+    const checkUserToken = async () => {
+        const userToken = await AsyncStorage.getItem('@UserToken:key');
+        if (userToken) {
+        console.log(`User is logged in with token: ${userToken}`);
+        // User is logged in, you can put additional logic here if needed
+        } else {
+        console.log('User is not logged in');
+        // Navigate to Login screen
+        navigation.navigate('Login');
+        }
+    };
+
+    useEffect(() => {
+        checkUserToken();
+    }, []);
 
       handle = ({item}) => {
         setSelectedCoin(item);
