@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { Main } from './';
 import { COLORS } from '../constants';
 import { WebView } from 'react-native-webview';
-import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 {/* Deriv API */}
 const APP_ID = 52558
@@ -15,6 +12,22 @@ TOKEN = '';
 USER = '';
 
 const Login = ({ navigation }) => {
+
+    // Function to check user token
+    const checkUserToken = async () => {
+        const userToken = this._retrieveToken();
+        if (userToken) {
+        console.log(`User is logged in with token: ${userToken}`);
+        navigation.navigate('Home');
+
+        } else {
+        console.log('User is not logged in');
+        }
+    };
+
+    useEffect(() => {
+        checkUserToken();
+    }, []);
 
     _storeToken = async (token) =>  {
         await AsyncStorage.setItem(
@@ -68,9 +81,11 @@ const Login = ({ navigation }) => {
             };
 
             let yessir = this._retrieveToken();
+            let yessir2 = this._retrieveUser();
 
             const timer = setTimeout(() => {
                 console.log(yessir);
+                console.log(yessir2);
                 navigation.navigate('Home'); // Replace 'Profile' with your profile screen name
             }, 1000);
             
