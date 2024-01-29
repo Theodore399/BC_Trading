@@ -4,6 +4,7 @@ import BalanceInfo from "./BalanceInfo";
 import Chart from "./Chart";
 import HeaderBar from "./HeaderBar";
 import TextButton from "./TextButton";
+import Dropdown from "./DropDown";
 
 export {
     TabIcon,
@@ -11,5 +12,6 @@ export {
     BalanceInfo,
     Chart,
     HeaderBar,
-    TextButton
+    TextButton,
+    Dropdown
 }

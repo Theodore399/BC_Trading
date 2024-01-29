@@ -37,11 +37,11 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
       function handleView () {
         return (
             <WebView
-                source={{uri: 'https://www.tradingview.com/?utm_source=www.tradingview.com&utm_medium=widget_new&utm_campaign=advanced-chart#main-market-summary'}}
+                source={{uri: 'https://coinmarketcap.com/'}}
                 style={{
                     flex: 1,
                     marginTop: 0,
-                    marginBottom: -3170
+                    marginBottom: -56
                 }}
                 allowFileAccessFromFileURLs={true}
                 domStorageEnabled={true}

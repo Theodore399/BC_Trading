@@ -1,19 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, Modal, TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
 import { useState } from 'react';
 import { Main } from './';
-import { IconTextButton } from '../components';
+import { IconTextButton, Dropdown} from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
 
-const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
+const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) => {
 
     const [isVisible, setIsVisible] = React.useState(false);
-
-    const [selectedCoin, setSelectedCoin] = React.useState(null);
 
     const handleOpenPopup = () => {
         setIsVisible(true);
@@ -55,43 +53,110 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
         )
     };
 
+    function renderInterestCalculation() {
+
+        const [stakeAmount, setStakeAmount] = useState(1);
+        const interestRate = 0.97;
+
+        const handleIncrease = () => {
+            setStakeAmount(stakeAmount + 1);
+        };
+    
+        const handleDecrease = () => {
+            if (stakeAmount > 0) {
+                setStakeAmount(stakeAmount - 1);
+            }
+        };
+
+        const calculateInterest = () => {
+            return stakeAmount * interestRate;
+        };
+
+        return (
+            <View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 5,}}>
+                    <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white,}}>STAKE: {calculateInterest}</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 20,}}>
+                    {/* Decrease Stake */}
+                    <TouchableOpacity onClick={handleDecrease}>
+                        <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>-</Text>
+                    </TouchableOpacity>
+                    <TextInput
+                        value={stakeAmount}
+                        onChangeText={setStakeAmount}
+                        placeholder="0"
+                        style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginTop: 5, marginLeft: 25, marginRight: 25, borderRadius: 5,}}/>
+                    {/* Increase Stake */}
+                    <TouchableOpacity onClick={handleIncrease}>
+                        <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>+</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 5,}}>
+                    <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, marginBottom: 20,}}>Commusion 97% = {calculateInterest}</Text>
+                </View>
+            </View>
+        )
+    };
+
+    function renderTradeDuration() {
+
+        const options = [
+            { id: 1, value: 'Seconds' },
+            { id: 2, value: 'Minutes' },
+            { id: 3, value: 'Hours' },
+            { id: 4, value: 'Days' },
+            { id: 5, value: 'Ticks' },
+        ];
+        const [tradeDuration, setTradeDuration] = React.useState(0);
+        const [durationUnit, setDurationUnit] = React.useState(options[0]);
+        const [selectedOption, setSelectedOption] = useState(null);
+        const handleSelect = (value) => {
+            setSelectedOption(value);
+            // Handle selected option here
+        };
+        const handleTradeDurationChange = (event) => {
+            setTradeDuration(event.target.value);
+        };
+        const handleDurationUnitChange = (event) => {
+            setDurationUnit(event.target.value);
+        };
+
+        const initiateTrade = () => {
+            alert(`Trade initiated for ${tradeDuration} ${durationUnit}!`);
+        };
+
+        return(
+            <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center',}}>
+                <Text style={{color: COLORS.white, ...FONTS.h3,}}>DURATION:</Text>
+                <TextInput
+                    value={tradeDuration}
+                    onChangeText={setTradeDuration}
+                    placeholder="0"
+                    style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginLeft: 5, marginRight: 5, borderRadius: 5,}}/>
+                <Text style={{ color: COLORS.white, ...FONTS.h3, marginRight: 10,}}>UNIT:</Text>
+                <View>
+                    <Dropdown data={options} onSelect={handleSelect} initialValue={selectedOption}/>
+                </View>
+            </View>
+        )
+    }
+
     return (
         <Main>
-            <View style={{
-                flex: 1,
-                backgroundColor: COLORS.black
-            }}>
+            <View style={{flex: 1, backgroundColor: COLORS.black}}>
+
                 {/* Header */}
                 {renderHeader()}
 
-                {/* Chart */}
-                {/*<Chart 
-                    containerStyle={{
-                        marginTop:  SIZES.padding * 2
-                    }}
-                    chartPrices={selectedCoin ? selectedCoin?.sparkline_in_7d?.price : coins[0]?.sparkline_in_7d?.price}
-                />*/}
-
                 {/* Top Popular Cryptocurrency */}
-
                 <View style={{marginBottom: SIZES.radius}}>
-                            <Text style={{
-                                color:COLORS.white, 
-                                ...FONTS.h3,
-                                marginTop: 30,
-                                marginLeft: 25,
-                                marginRight: 25, 
-                                fontSize: 18
-                                }}
-                            >Please select the currency you want to trade with below:</Text>
-                        </View>
-
-                <FlatList
-                    data={coins}
+                    <Text style={{color:COLORS.white, ...FONTS.h3, marginTop: 30, marginLeft: 25, marginRight: 25, fontSize: 18}}>Please select the currency you want to trade with below:</Text>
+                </View>
+                <FlatList 
+                data={coins}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={{
-                        paddingHorizontal: SIZES.padding
-                    }}
+                    contentContainerStyle={{paddingHorizontal: SIZES.padding}}
                     renderItem={({item}) => {
 
                         let priceColor = (item.
@@ -125,50 +190,20 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
 
                                 {/* Name */}
                                 <View style={{flex: 1}}>
-                                    <Text 
-                                        style={{
-                                            color: COLORS.white,
-                                            ...FONTS.h3
-                                        }}>{item.name}
-                                    </Text>
+                                    <Text style={{color: COLORS.white, ...FONTS.h3}}>{item.name}</Text>
                                 </View>
 
                                 {/* Figures */}
                                 <View>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        color: COLORS.white,
-                                        ...FONTS.h5,
-                                        lineHeight: 15
-                                        }}
-                                    >$ {item.current_price}</Text>
-                                    <View 
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-end'
-                                        }}
-                                    >
+                                    <Text style={{textAlign: 'right', color: COLORS.white, ...FONTS.h5, lineHeight: 15}}>$ {item.current_price}</Text>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
                                         {
                                             item.price_change_percentage_7d_in_currency != 0 &&
                                             <Image
                                                 source={icons.upArrow}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    tintColor: priceColor,
-                                                    transform: item.price_change_percentage_7d_in_currency > 0 ? [{rotate: '45deg'}] : [{rotate: '125deg'}]
-                                                }}
-                                            />
+                                                style={{height: 10, width: 10, tintColor: priceColor, transform: item.price_change_percentage_7d_in_currency > 0 ? [{rotate: '45deg'}] : [{rotate: '125deg'}]}}/>
                                         }
-                                        <Text
-                                            style={{
-                                                marginLeft: 5,
-                                                color: priceColor,
-                                                ...FONTS.body5,
-                                                lineHeight: 15
-                                            }}
-                                        >{item.price_change_percentage_7d_in_currency.toFixed(2)}%</Text>
+                                        <Text style={{ marginLeft: 5, color: priceColor, ...FONTS.body5, lineHeight: 15}}>{item.price_change_percentage_7d_in_currency.toFixed(2)}%</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -176,11 +211,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                         )
                     }}
                     ListFooterComponent={
-                        <View
-                            style={{
-                                marginBottom: 50
-                            }}
-                        />
+                        <View style={{marginBottom: 50,}}/>
                     }
                 />
 
@@ -188,69 +219,54 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
                 <Modal 
                     visible={isVisible}
                     transparent={true}
-                    animationType={'fade'}>
+                    animationType={'slide'}
+                    style={{borderWidth: 1, borderColor: COLORS.white}}
+                >
                     <TouchableOpacity
-                        style={{
-                            flex: 1,
-                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
+                        style={{flex: 1, backgroundColor: COLORS.transparentBlack1, justifyContent: 'center', alignItems: 'center'}}
                         activeOpacity={1}
-                        onPress={handleClosePopup}
-                    >
+                        onPress={handleClosePopup}>
+                            
                         {/* Popup Container */}
-                        <View
-                            style={{
-                                backgroundColor: COLORS.transparentBlack,
-                                padding: 20,
-                                borderRadius: SIZES.radius,
-                                alignItems: 'center',
-                                width: '100%'
-                            }}
-                        >
-                            {/* Title */}
-                            <Text 
-                                style={{
-                                    color: COLORS.white,
-                                    ...FONTS.h3,
-                                    marginBottom: 20
-                                }}>Choose:
-                            </Text>
+                        <View style={{borderWidth: 1, borderColor: COLORS.white ,backgroundColor: COLORS.transparentBlack, padding: 20, borderRadius: SIZES.radius, alignItems: 'center', width: '100%'}}>
+                            
+                            {/* Stake */}
+                            {renderInterestCalculation()}
 
-                            {/* Buttons */}
-                            <IconTextButton
-                                label='Buy'
-                                icon={icons.sell}
-                                containerStyle={{
-                                    width: 300
-                                }}
-                                onPress={() => (
-                                    (console.log('Bought Successfully')),
-                                    handleClosePopup()
-                                )}
-                            />
-                            <IconTextButton
-                                label='Sell'
-                                icon={icons.buy}
-                                containerStyle={{
-                                    marginTop: SIZES.base,
-                                    width: 300
-                                }}
-                                onPress={() => (
-                                    (console.log('Sold Successfully')),
-                                    handleClosePopup()
-                                )}
-                            />
+                            {/* Duration */}
+                            {renderTradeDuration()}
+
+                            {/* Title */}
+                            <Text style={{color: COLORS.white, ...FONTS.h3, marginTop: 20,}}>Choose:</Text>
+
+                            <View
+                                style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 10,}}>
+                                {/* Buttons */}
+                                <IconTextButton
+                                    label='Buy'
+                                    icon={icons.sell}
+                                    containerStyle={{width: 100, marginRight: 5,}}
+                                    onPress={() => ((console.log('Bought Successfully')), handleClosePopup())}/>
+                                <IconTextButton
+                                    label='Sell'
+                                    icon={icons.buy}
+                                    containerStyle={{width: 100, marginLeft: 5,}}
+                                    onPress={() => ((console.log('Sold Successfully')), handleClosePopup())}/>
+                            </View>
+                            <View>
+                                <IconTextButton
+                                    label='Trade'
+                                    icon={icons.trade}
+                                    containerStyle={{width: 200, marginLeft: 5, marginTop: 60}}
+                                    onPress={() => ((console.log('Trade Successfully')), handleClosePopup(), navigation.navigate('Portfolio'))}/>
+                            </View>
                         </View>
                     </TouchableOpacity>
                 </Modal>
             </View>
         </Main>
     )
-}
-
-
+};
 
 // export default Currency;
 

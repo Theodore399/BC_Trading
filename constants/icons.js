@@ -1,5 +1,6 @@
 const briefcase = require("../assets/icons/briefcase.png")
 const close = require("../assets/icons/close.png")
+const doubleUp = require("../assets/icons/doubleUp.png")
 const home = require("../assets/icons/home.png")
 const market = require("../assets/icons/market.png")
 const profile = require("../assets/icons/profile.png")
@@ -20,6 +21,7 @@ const change = require("../assets/icons/change.png")
 export default {
     briefcase,
     close,
+    doubleUp,
     home,
     market,
     profile,
