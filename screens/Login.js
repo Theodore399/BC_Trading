@@ -1,33 +1,106 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Main } from './';
 import { COLORS } from '../constants';
 import { WebView } from 'react-native-webview';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused
 
 {/* Deriv API */}
+// import DerivAPIBasic from '@deriv/deriv-api/dist/DerivAPIBasic';
+import DerivAPI from '@deriv/deriv-api';
+// import derivDerivApi from 'https://cdn.skypack.dev/@deriv/deriv-api';
+
 const APP_ID = 52558
-const CONNETION = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
 const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
+const CONNETION = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+
+        // const api = new DerivAPI({ CONNETION });
+
+
+
+// const tickStream = () => api.subscribe({ ticks: 'R_100' });
+
+
 TOKEN = '';
 USER = '';
 
 const Login = ({ navigation }) => {
+    const [url, setUrl] = useState();
 
-    // Function to check user token
-    const checkUserToken = async () => {
-        const userToken = this._retrieveToken();
-        if (userToken) {
-        console.log(`User is logged in with token: ${userToken}`);
-        navigation.navigate('Home');
+    const isFocused = useIsFocused(); // Determine if the component is focused
 
-        } else {
-        console.log('User is not logged in');
-        }
-    };
+    // Add state to manage the WebView URL
+    const [webViewUrl, setWebViewUrl] = useState(''); // Initialize with an empty string
+
+    const socket = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
 
     useEffect(() => {
         checkUserToken();
-    }, []);
+        // _openConnectionDerivApi();
+        resetWebViewUrl(); // Call this function when the component mounts
+    }, [isFocused, resetWebViewUrl]);
+
+    // Function to reset the WebView URL
+    const resetWebViewUrl = () => {
+        const params = new URLSearchParams();
+        params.append('app_id', APP_ID);
+
+        const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
+        setUrl(authorizeUrl);
+        setWebViewUrl(authorizeUrl); // Set the WebView URL to the initial login URL
+    };
+
+    // Function to check user token
+    const checkUserToken = async () => {
+        const userToken = await AsyncStorage.getItem('@UserToken:key');
+        if (userToken) {
+            console.log(userToken);
+            navigation.navigate('Home');
+        } else {
+            console.log('User is not logged in');
+        }
+    };
+
+    const _connectionDerivApi = async (token) => {
+        const CONNETION = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+
+        CONNETION.onopen = function (e) {
+            console.log('[open] Connection established');
+            console.log('Sending to server');
+            const sendMessage = JSON.stringify({ "authorize": token });
+            CONNETION.send(sendMessage);
+        };
+
+        let user_data ;
+    
+        CONNETION.onmessage = function (event) {
+            user_data = JSON.stringify(event.data);
+        };
+
+        await this._storeUser(user_data);
+        console.log(`[message] Data received from server: ${user_data}`);
+
+    };
+
+    const _openConnectionDerivApi = async () => {
+        socket.onopen = function (e) {
+          console.log('[open] Connection established');
+          console.log('Sending to server');
+          const sendMessage = JSON.stringify({ ping: 1 });
+          socket.send(sendMessage);
+        };
+    };
+
+    const _closeConnectionDerivApi = async () => {
+        socket.onclose = function (event) {
+          if (event.wasClean) {
+            consloe.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+          } else {
+            console.log('[close] Connection died');
+          }
+        };
+    };
 
     _storeToken = async (token) =>  {
         await AsyncStorage.setItem(
@@ -39,6 +112,7 @@ const Login = ({ navigation }) => {
     };
 
     _storeUser = async (user) =>  {
+        alert(user);
         await AsyncStorage.setItem(
             '@UserData:key',
             user,
@@ -59,40 +133,32 @@ const Login = ({ navigation }) => {
 
     const handleWebViewNavigationStateChange = (navState) => {
         const { url } = navState;
+        const url_string = navState.url;
         
         if (url.includes('&token1=')) {
-            const token = url.split('&token1=')[1].split('&')[0];
-            this.TOKEN = token;
+            console.log(url_string);
+            const token = url_string.split('&token1=')[1].split('&')[0];
+            console.log(token);
+            this._storeToken(token);
 
-            this._storeToken(token.toString());
-
-            CONNETION.onopen = function (e) {
-                console.log('[open] Connection established');
-                console.log('Sending to server');
-                const sendMessage = JSON.stringify({ "authorize": token });
-                CONNETION.send(sendMessage);
-            };
-        
-            CONNETION.onmessage = function (event) {
-                // auth.setUser(event.data);
-                this.USER = event.data;
-                this._storeUser(JSON.stringify(event.data));
-                console.log(`[message] Data received from server: ${event.data}`);
-            };
-
-            let yessir = this._retrieveToken();
-            let yessir2 = this._retrieveUser();
-
-            const timer = setTimeout(() => {
-                console.log(yessir);
-                console.log(yessir2);
-                navigation.navigate('Home'); // Replace 'Profile' with your profile screen name
-            }, 1000);
             
+
+            _connectionDerivApi(token);
+
+            // const params = new URLSearchParams();
+            // params.append('app_id', APP_ID);
         
-        } else if (url.includes('?error=')) {
-            const errorMessage = url.split('?error=')[1]; // Extract the error message
-            alert('Error: ' + errorMessage);
+            // setWebViewUrl(url); // Reset the WebView URL to the initial login URL
+
+            // resetWebViewUrl();
+            // setUrl(`${API_BASE_URL}/authorize?${params.toString()}`);
+
+            setTimeout(() => {
+                // console.log(3,user_data);
+                navigation.navigate('Home');
+            }, 1000);
+
+            // navigation.navigate('Home'); 
         } 
     };
 
@@ -128,9 +194,27 @@ const Login = ({ navigation }) => {
                 flex: 1,
                 backgroundColor: COLORS.white
             }}>
+
                 {/* Login */}
+                {webViewUrl ? ( // Only render the WebView if webViewUrl is not empty
+                    <WebView
+                        source={{ uri: url }}
+                        style={{
+                            flex: 1,
+                            marginTop: 0,
+                            marginBottom: -2170
+                        }}
+                        allowFileAccessFromFileURLs={true}
+                        domStorageEnabled={true}
+                        allowFileAccess={true}
+                        allowUniversalAccessFromFileURLs={true}
+                        originWhitelist={['*']}
+                        onShouldStartLoadWithRequest={() => true}
+                        onNavigationStateChange={handleWebViewNavigationStateChange}
+                    />
+                ) : null}
                 
-                {login()}
+                {/* {login()} */}
                 
             </View>
         </Main>
