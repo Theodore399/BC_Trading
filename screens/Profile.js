@@ -1,20 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, } from 'react-native';
 import { Main } from './';
 import { IconTextButton, } from '../components';
 import { HeaderBar, } from '../components';
 import { SIZES, COLORS, FONTS,  icons } from '../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Profile = ({ containerStyle }) => {
+const Profile = ({ containerStyle, navigation }) => {
 
-  const [fullname, setFullname] = useState('');
-  const [email, setEmail] = useState('');
-  const [id, setId] = useState('');
+  // Function to check user token
+    const checkUserToken = async () => {
+        const userToken = await AsyncStorage.getItem('@UserToken:key');
+        const userData = await AsyncStorage.getItem('@UserData:key');
+        if (userToken) {
+        console.log(`User is logged in with token: ${userToken}`);
+        console.log(1, userData);
 
-  const handleUpdate = async () => {
-    console.log('Updating user details:', { fullname, email, id });
-    alert('Profile updated successfully!');
-  };
+        // User is logged in, you can put additional logic here if needed
+        } else {
+        console.log('User is not logged in');
+        // Navigate to Login screen
+        navigation.navigate('Login');
+        }
+    };
+
+    useEffect(() => {
+        checkUserToken();
+    }, []);
+
+    const [fullname, setFullname] = useState('');
+    const [email, setEmail] = useState('');
+    const [id, setId] = useState('');
+
+    const handleUpdate = async () => {
+        console.log('Updating user details:', { fullname, email, id });
+        alert('Profile updated successfully!');
+    };
+
+    _removeToken = async () => {
+        try {
+            await AsyncStorage.removeItem('@UserToken:key');
+            console.log('Token removed');
+        } catch (error) {
+            console.error('Error removing token:', error);
+        }
+    };
+
+    const handleLogout = async () => {
+        console.log('Updating user details:', { fullname, email, id });
+        this._removeToken();
+        checkUserToken();
+    };
 
   return (
     <Main>
@@ -109,6 +145,25 @@ const Profile = ({ containerStyle }) => {
                             height: 40
                         }}
                         onPress={handleUpdate}
+                    />
+                </View>
+                <View 
+                    style={{
+                        flexDirection: 'row',
+                        marginTop: 20,
+                        marginLeft: 100,
+                        marginRight: 100,
+                    }}
+                >
+                    <IconTextButton
+                        label='Logout'
+                        containerStyle={{
+                            flex: 1,
+                            height: 50,
+                            backgroundColor: 'red',
+                            color: 'white'
+                        }}
+                        onPress={handleLogout}
                     />
                 </View>
             </View>
