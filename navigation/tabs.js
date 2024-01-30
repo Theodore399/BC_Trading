@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-import { Home, Portfolio, Graph, Currency, Profile, Login } from "../screens"
+import { Home, Portfolio, Graph, Currency, Profile, Login, Withdraw, Deposit } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
@@ -102,6 +102,24 @@ const Tabs = () => {
             <Tab.Screen
                 name="Login"
                 component={Login}
+                options={{
+                    tabBarButton: () => null, // This makes the tab invisible
+                    tabBarVisible: false, // This ensures the tab is not visible
+                }}
+            />
+
+            <Tab.Screen
+                name="Withdraw"
+                component={Withdraw}
+                options={{
+                    tabBarButton: () => null, // This makes the tab invisible
+                    tabBarVisible: false, // This ensures the tab is not visible
+                }}
+            />
+
+            <Tab.Screen
+                name="Deposit"
+                component={Deposit}
                 options={{
                     tabBarButton: () => null, // This makes the tab invisible
                     tabBarVisible: false, // This ensures the tab is not visible
