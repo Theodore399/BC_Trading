@@ -56,22 +56,22 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
 
     function renderInterestCalculation() {
 
-        const [stakeAmount, setStakeAmount] = useState(1);
-        const interestRate = 0.97;
+  const [number, setNumber] = useState(1);
+  const interestRate = 0.97;
+  
+  const increaseNumber = () => {
+    setNumber(number + 1);
+  };
 
-        const handleIncrease = () => {
-            setStakeAmount(stakeAmount + 1);
-        };
-    
-        const handleDecrease = () => {
-            if (stakeAmount > 0) {
-                setStakeAmount(stakeAmount - 1);
-            }
-        };
+  const decreaseNumber = () => {
+    if (number > 0) {
+      setNumber(number - 1);
+    }
+  };
 
-        const calculateInterest = () => {
-            return stakeAmount * interestRate;
-        };
+  const calculateInterest = () => {
+    return number * interestRate;
+  };
 
         return (
             <View>
