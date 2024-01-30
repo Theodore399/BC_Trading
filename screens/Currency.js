@@ -73,33 +73,24 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
     return number * interestRate;
   };
 
-        return (
-            <View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 5,}}>
-                    <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white,}}>STAKE: {calculateInterest}</Text>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 20,}}>
-                    {/* Decrease Stake */}
-                    <TouchableOpacity onClick={handleDecrease}>
-                        <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>-</Text>
-                    </TouchableOpacity>
-                    <TextInput
-                        value={stakeAmount}
-                        onChangeText={setStakeAmount}
-                        placeholder="0"
-                        style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginTop: 5, marginLeft: 25, marginRight: 25, borderRadius: 5,}}/>
-                    {/* Increase Stake */}
-                    <TouchableOpacity onClick={handleIncrease}>
-                        <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>+</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 5,}}>
-                    <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, marginBottom: 20,}}>Commusion 97% = {calculateInterest}</Text>
-                </View>
-            </View>
-        )
-    };
-
+       return (
+    <View>
+      <Text>Stakes:</Text>
+      <Button onPress={decreaseNumber} title=" - " />
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        value={number.toString()}
+        onChangeText={(value) => setNumber(Number(value))}
+      />
+      <Button onPress={increaseNumber} title=" + " />
+      <Text>Interest at 97%: {calculateInterest()}</Text>
+      <Button title="BUY" onPress={() => {}} />
+      <Button title="SELL" onPress={() => {}} />
+    </View>
+  );
+};
+            
     function renderTradeDuration() {
 
         const options = [
