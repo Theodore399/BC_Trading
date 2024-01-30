@@ -124,7 +124,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                 style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 10,}}>
                                 {/* Buttons */}
                                 <IconTextButton
-                                    label='Double Up'
+                                    label='Copy Trade'
                                     icon={icons.doubleUp}
                                     containerStyle={{width: 130, marginRight: 5,}}
                                     onPress={() => ((console.log('Trade Closed')), handleClosePopup())}/>
