@@ -102,17 +102,34 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
     // calling trading API
   };
         return(
-            <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center',}}>
-                <Text style={{color: COLORS.white, ...FONTS.h3,}}>DURATION:</Text>
-                <TextInput
-                    value={tradeDuration}
-                    onChangeText={setTradeDuration}
-                    placeholder="0"
-                    style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginLeft: 5, marginRight: 5, borderRadius: 5,}}/>
-                <Text style={{ color: COLORS.white, ...FONTS.h3, marginRight: 10,}}>UNIT:</Text>
-                <View>
-                    <Dropdown data={options} onSelect={handleSelect} initialValue={selectedOption}/>
-                </View>
+            <View style={styles.container}>
+      <InterestCalculator />
+      <View>
+        <Text>Duration: </Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={tradeDuration}
+          onChangeText={setTradeDuration}
+        />
+        <Text>Time:</Text>
+        <DropDownPicker
+          open={open}
+          value={durationUnit}
+          items={[
+            {label: 'Seconds', value: 's'},
+            {label: 'Minutes', value: 'm'},
+            {label: 'Hours', value: 'h'},
+            {label: 'Days', value: 'd'},
+            {label: 'Ticks', value: 't'},
+            {label: ' No Time', value:''}
+          ]}
+          setOpen={setOpen}
+          setValue={setDurationUnit}
+        />
+      </View>
+      <Button onPress={initiateTrade} title="Initiate Trade" />
+    </View>
             </View>
         )
     }
