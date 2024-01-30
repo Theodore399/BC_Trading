@@ -79,7 +79,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 20,}}>
                     {/* Decrease Stake */}
-                    <TouchableOpacity onClick={handleDecrease}>
+                    <TouchableOpacity onPress={handleDecrease}>
                         <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>-</Text>
                     </TouchableOpacity>
                     <TextInput
@@ -88,7 +88,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                         placeholder="0"
                         style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginTop: 5, marginLeft: 25, marginRight: 25, borderRadius: 5,}}/>
                     {/* Increase Stake */}
-                    <TouchableOpacity onClick={handleIncrease}>
+                    <TouchableOpacity onPress={handleIncrease}>
                         <Text style={{flex: 1, justifyContent: 'center', alignItems: 'center', textAlign: 'center', color: COLORS.white, fontSize: 30,}}>+</Text>
                     </TouchableOpacity>
                 </View>
