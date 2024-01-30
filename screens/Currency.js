@@ -93,31 +93,14 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
             
     function renderTradeDuration() {
 
-        const options = [
-            { id: 1, value: 'Seconds' },
-            { id: 2, value: 'Minutes' },
-            { id: 3, value: 'Hours' },
-            { id: 4, value: 'Days' },
-            { id: 5, value: 'Ticks' },
-        ];
-        const [tradeDuration, setTradeDuration] = React.useState(0);
-        const [durationUnit, setDurationUnit] = React.useState(options[0]);
-        const [selectedOption, setSelectedOption] = useState(null);
-        const handleSelect = (value) => {
-            setSelectedOption(value);
-            // Handle selected option here
-        };
-        const handleTradeDurationChange = (event) => {
-            setTradeDuration(event.target.value);
-        };
-        const handleDurationUnitChange = (event) => {
-            setDurationUnit(event.target.value);
-        };
+  const [tradeDuration, setTradeDuration] = useState('0');
+  const [durationUnit, setDurationUnit] = useState('s');
+  const [open, setOpen] = useState(false);
 
-        const initiateTrade = () => {
-            alert(`Trade initiated for ${tradeDuration} ${durationUnit}!`);
-        };
-
+  const initiateTrade = () => {
+    Alert.alert(`Trade initiated for ${tradeDuration} ${durationUnit}!`);
+    // calling trading API
+  };
         return(
             <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center',}}>
                 <Text style={{color: COLORS.white, ...FONTS.h3,}}>DURATION:</Text>
