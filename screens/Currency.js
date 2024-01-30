@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Main } from './';
 import { IconTextButton, Dropdown} from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) => {
 
