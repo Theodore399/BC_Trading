@@ -36,10 +36,20 @@ const Login = ({ navigation }) => {
     const socket = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
 
     useEffect(() => {
-        checkUserToken();
-        // _openConnectionDerivApi();
-        resetWebViewUrl(); // Call this function when the component mounts
-    }, [isFocused, resetWebViewUrl]);
+        {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Home');
+        } else {
+          console.log('User is not logged in');
+          setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        }
+      };
 
     // Function to reset the WebView URL
     const resetWebViewUrl = () => {
