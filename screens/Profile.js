@@ -25,17 +25,21 @@ const Profile = ({ containerStyle, navigation }) => {
     };
 
     useEffect(() => {
-        checkUserToken();
-    }, []);
-
-    const [fullname, setFullname] = useState('');
-    const [email, setEmail] = useState('');
-    const [id, setId] = useState('');
-
-    const handleUpdate = async () => {
-        console.log('Updating user details:', { fullname, email, id });
-        alert('Profile updated successfully!');
-    };
+        {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Home');
+        } else {
+          console.log('User is not logged in');
+          setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        }
+      };
+  
 
     _removeToken = async () => {
         try {
