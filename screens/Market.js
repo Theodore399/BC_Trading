@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Animated, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { getCoinMarket } from '../stores/market/marketActions';
