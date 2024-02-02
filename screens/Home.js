@@ -17,6 +17,23 @@ const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
 const REDIRECT_URI = 'localhost:3000/callback'; // Replace with your actual redirect URI
 const APP_ID = 52558;
 
+useEffect(() => {
+        {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Home');
+        } else {
+          console.log('User is not logged in');
+          setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        }
+      };
+  
+
 const Home = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) => {
 
     // Function to check user token
