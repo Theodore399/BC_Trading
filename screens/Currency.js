@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Image, Modal, TextInput} from 'react-native';
 import { connect } from 'react-redux';
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
