@@ -11,12 +11,6 @@ import { WebView } from 'react-native-webview';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-{/* Deriv API */}
-const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
-const REDIRECT_URI = 'localhost:3000/callback'; // Replace with your actual redirect URI
-const APP_ID = 52558;
-
 useEffect(() => {
         {/* Retrieve access token */}
       const getAccessToken = async () => {
