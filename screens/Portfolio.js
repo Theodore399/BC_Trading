@@ -23,7 +23,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
         if (accessToken) {
           console.log('User logged in successfully');
           console.log(accessToken);
-          navigation.navigate('Home');
+          navigation.navigate('Portfolio');
         } else {
           console.log('User is not logged in');
           setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
