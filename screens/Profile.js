@@ -8,22 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = ({ containerStyle, navigation }) => {
 
-  // Function to check user token
-    const checkUserToken = async () => {
-        const userToken = await AsyncStorage.getItem('@UserToken:key');
-        const userData = await AsyncStorage.getItem('@UserData:key');
-        if (userToken) {
-        console.log(`User is logged in with token: ${userToken}`);
-        console.log(1, userData);
-
-        // User is logged in, you can put additional logic here if needed
-        } else {
-        console.log('User is not logged in');
-        // Navigate to Login screen
-        navigation.navigate('Login');
-        }
-    };
-
+ 
     useEffect(() => {
         {/* Retrieve access token */}
       const getAccessToken = async () => {
@@ -33,7 +18,7 @@ const Profile = ({ containerStyle, navigation }) => {
         if (accessToken) {
           console.log('User logged in successfully');
           console.log(accessToken);
-          navigation.navigate('Home');
+          navigation.navigate('Profile');
         } else {
           console.log('User is not logged in');
           setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
