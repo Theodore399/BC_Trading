@@ -10,17 +10,6 @@ import { StatusBar } from 'expo-status-bar';
 
 const Withdraw = ({ navigation }) => {
 
-    // Function to check user token
-    const checkUserToken = async () => {
-        const userToken = await AsyncStorage.getItem('@UserToken:key');
-        if (userToken) {
-        console.log(`User is logged in with token: ${userToken}`);
-        } else {
-        console.log('User is not logged in');
-        // Navigate to Login screen
-        navigation.navigate('Login');
-        }
-    };
 
      useEffect(() => {
         {/* Retrieve access token */}
