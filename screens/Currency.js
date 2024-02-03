@@ -69,84 +69,95 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
 
     function renderInterestCalculation() {
 
-  const [number, setNumber] = useState(1);
-  const interestRate = 0.97;
-  
-  const increaseNumber = () => {
-    setNumber(number + 1);
+  const [stakes, setStakes] = useState('');
+  const [timeUnit, setTimeUnit] = useState(''); // For selecting unit of time
+  const [duration, setDuration] = useState(''); // User enters duration
+  const [commission, setCommission] = useState(0);
+
+  const COMMISSION_RATE = 0.97; 
+
+  const handleStakesChange = (text) => {
+    setStakes(text);
+    updateCommission(text);
   };
 
-  const decreaseNumber = () => {
-    if (number > 0) {
-      setNumber(number - 1);
+  const updateCommission = (stakesValue) => {
+    const numericStakes = parseFloat(stakesValue) || 0;
+    setCommission(numericStakes * COMMISSION_RATE);
+  };
+
+  const increaseStake = () => {
+    const currentStakes = parseFloat(stakes) || 0;
+    const newStakes = currentStakes + 1; // Increment by 1 (or your desired value)
+    setStakes(newStakes.toString());
+    updateCommission(newStakes);
+  };
+
+  const decreaseStake = () => {
+    const currentStakes = parseFloat(stakes) || 0;
+    const newStakes = currentStakes - 1; // Decrement by 1 (or your desired value)
+    if (newStakes >= 0) { // Prevent negative stakes
+      setStakes(newStakes.toString());
+      updateCommission(newStakes);
     }
   };
 
-  const calculateInterest = () => {
-    return number * interestRate;
-  };
-
+  const handleOrder = (type) => {
+  Alert.alert(
+    'Order Info',
+    `Type: ${type}\nStakes: ${stakes}\nCommission: ${commission.toFixed(2)}\nTime Unit: ${timeUnit || "Not selected"}\nDuration: ${duration || "Not entered"}`
+  );
+};
        return (
-    <View>
-      <Text>Stakes:</Text>
-      <Button onPress={decreaseNumber} title=" - " />
+    <View style={styles.container}>
+      <View style={styles.stakesInputContainer}>
+        <TouchableOpacity onPress={decreaseStake} style={styles.stakeButton}>
+          <Text>-</Text>
+        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          onChangeText={handleStakesChange}
+          value={stakes}
+          placeholder="Enter stakes"
+          keyboardType="numeric"
+        />
+        <TouchableOpacity onPress={increaseStake} style={styles.stakeButton1}>
+          <Text>+</Text>
+        </TouchableOpacity>
+      </View>
+      <Text>Commission is 97% : {commission.toFixed(2)}</Text>
+      <Picker
+        selectedValue={timeUnit}
+        style={styles.picker}
+        onValueChange={(itemValue, itemIndex) => setTimeUnit(itemValue)}
+      >
+        <Picker.Item label="Select Time Unit" value="" />
+        <Picker.Item label="Minute/s" value="minutes" />
+        <Picker.Item label="Hour/s" value="hours" />
+        <Picker.Item label="Day/s" value="days" />
+        <Picker.Item label="Month/s" value="months" />
+        <Picker.Item label="Year/s" value="years" />
+      </Picker>
+
       <TextInput
+      
         style={styles.input}
+        onChangeText={setDuration}
+        value={duration}
+        placeholder="Enter duration"
         keyboardType="numeric"
-        value={number.toString()}
-        onChangeText={(value) => setNumber(Number(value))}
+       
       />
-      <Button onPress={increaseNumber} title=" + " />
-      <Text>Interest at 97%: {calculateInterest()}</Text>
-      <Button title="BUY" onPress={() => {}} />
-      <Button title="SELL" onPress={() => {}} />
+
+      <View style={styles.buttonContainer}>
+        <Button title="Buy" onPress={() => handleOrder('buy')} color="#008000"/>
+        <Button title="Sell" onPress={() => handleOrder('sell')} color="#ff0000" />
+      </View>
     </View>
   );
 };
             
-    function renderTradeDuration() {
-
-  const [tradeDuration, setTradeDuration] = useState('0');
-  const [durationUnit, setDurationUnit] = useState('s');
-  const [open, setOpen] = useState(false);
-
-  const initiateTrade = () => {
-    Alert.alert(`Trade initiated for ${tradeDuration} ${durationUnit}!`);
-    // calling trading API
-  };
-        return(
-            <View style={styles.container}>
-      <InterestCalculator />
-      <View>
-        <Text>Duration: </Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={tradeDuration}
-          onChangeText={setTradeDuration}
-        />
-        <Text>Time:</Text>
-        <DropDownPicker
-          open={open}
-          value={durationUnit}
-          items={[
-            {label: 'Seconds', value: 's'},
-            {label: 'Minutes', value: 'm'},
-            {label: 'Hours', value: 'h'},
-            {label: 'Days', value: 'd'},
-            {label: 'Ticks', value: 't'},
-            {label: ' No Time', value:''}
-          ]}
-          setOpen={setOpen}
-          setValue={setDurationUnit}
-        />
-      </View>
-      <Button onPress={initiateTrade} title="Initiate Trade" />
-    </View>
-            </View>
-        )
-    }
-
+    
     return (
         <Main>
             <View style={{flex: 1, backgroundColor: COLORS.black}}>
@@ -238,9 +249,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                             {/* Stake */}
                             {renderInterestCalculation()}
 
-                            {/* Duration */}
-                            {renderTradeDuration()}
-
+            
                             {/* Title */}
                             <Text style={{color: COLORS.white, ...FONTS.h3, marginTop: 20,}}>Choose:</Text>
 
