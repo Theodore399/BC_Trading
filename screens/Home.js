@@ -43,9 +43,6 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) => {
         }
     };
 
-    useEffect(() => {
-        checkUserToken();
-    }, []);
 
       handle = ({item}) => {
         setSelectedCoin(item);
