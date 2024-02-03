@@ -1,10 +1,12 @@
 import React, { useEffect, useState, } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, Modal, TextInput} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Image, Modal, TextInput, Button, Alert, Stylesheet} from 'react-native';
 import { connect } from 'react-redux';
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
 import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
 import { useFocusEffect } from '@react-navigation/native';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { View, Button, TextInput, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { Main } from './';
 import { IconTextButton, Dropdown} from '../components';
 import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
