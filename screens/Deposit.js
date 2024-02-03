@@ -17,7 +17,7 @@ const Deposit = ({ navigation }) => {
         } else {
         console.log('User is not logged in');
         // Navigate to Login screen
-        navigation.navigate('Login');
+        navigation.navigate('Deposit');
         }
     };
 
