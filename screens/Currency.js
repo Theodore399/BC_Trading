@@ -24,12 +24,21 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
         setIsVisible(false);
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            getHoldings(holdings = dummyData.holdings)
-            getCoinMarket()
-        }, [])
-    )
+    useEffect(() => {
+        {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Home');
+        } else {
+          console.log('User is not logged in');
+          setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        }
+      };
 
     let totalBalance = myHoldings.reduce((a, b) => a + (b.total || 0), 0)
     let valueChange = myHoldings.reduce((a, b) => a + (b.holding_value_change_7d || 0), 0)
