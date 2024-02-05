@@ -2,6 +2,7 @@
   "expo": {
     "name": "BC_Trading",
     "slug": "BC_Trading",
+    "scheme": ["trading"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.jpg",

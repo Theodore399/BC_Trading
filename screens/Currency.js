@@ -23,14 +23,14 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
 
     useFocusEffect(
         React.useCallback(() => {
-            getHoldings(holdings = dummyData.holdings)
-            getCoinMarket()
+            getHoldings(holdings = dummyData.holdings);
+            getCoinMarket();
         }, [])
-    )
+    );
 
-    let totalBalance = myHoldings.reduce((a, b) => a + (b.total || 0), 0)
-    let valueChange = myHoldings.reduce((a, b) => a + (b.holding_value_change_7d || 0), 0)
-    let percChange = valueChange / (totalBalance - valueChange) * 100
+    let totalBalance = myHoldings.reduce((a, b) => a + (b.total || 0), 0);
+    let valueChange = myHoldings.reduce((a, b) => a + (b.holding_value_change_7d || 0), 0);
+    let percChange = valueChange / (totalBalance - valueChange) * 100;
 
     function renderHeader() {
         return (
@@ -48,26 +48,25 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                         color: COLORS.white,
                         ...FONTS.largeTitle
                     }}
-                >Trade</Text>
+                >Market</Text>
             </View>
-        )
-    };
+        );
+    }
 
     function renderInterestCalculation() {
-
         const [stakeAmount, setStakeAmount] = useState(1);
         const interestRate = 0.97;
-
+    
         const handleIncrease = () => {
-            setStakeAmount(stakeAmount + 1);
+          setStakeAmount(stakeAmount + 1);
         };
     
         const handleDecrease = () => {
-            if (stakeAmount > 0) {
-                setStakeAmount(stakeAmount - 1);
-            }
+          if (stakeAmount > 0) {
+            setStakeAmount(stakeAmount - 1);
+          }
         };
-
+    
         const calculateInterest = () => {
             return stakeAmount * interestRate;
         };
@@ -84,7 +83,7 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                     </TouchableOpacity>
                     <TextInput
                         value={stakeAmount}
-                        onChangeText={setStakeAmount}
+                        onChangeText={text => setStakeAmount(text)}
                         placeholder="0"
                         style={{backgroundColor: COLORS.white, fontSize: 14, height: 35, width: 40, marginTop: 5, marginLeft: 25, marginRight: 25, borderRadius: 5,}}/>
                     {/* Increase Stake */}
@@ -116,10 +115,10 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
             // Handle selected option here
         };
         const handleTradeDurationChange = (event) => {
-            setTradeDuration(event.target.value);
+            setTradeDuration(event.nativeEvent.text);
         };
         const handleDurationUnitChange = (event) => {
-            setDurationUnit(event.target.value);
+            setDurationUnit(event.nativeEvent.text);
         };
 
         const initiateTrade = () => {
@@ -246,19 +245,29 @@ const Currency = ({getHoldings, getCoinMarket, myHoldings, coins, navigation}) =
                                     label='Buy'
                                     icon={icons.sell}
                                     containerStyle={{width: 100, marginRight: 5,}}
-                                    onPress={() => ((console.log('Bought Successfully')), handleClosePopup())}/>
+                                    onPress={() => {
+                                        console.log('Bought Successfully'); 
+                                        handleClosePopup()
+                                    }}/>
                                 <IconTextButton
                                     label='Sell'
                                     icon={icons.buy}
                                     containerStyle={{width: 100, marginLeft: 5,}}
-                                    onPress={() => ((console.log('Sold Successfully')), handleClosePopup())}/>
+                                    onPress={() => {
+                                        console.log('Sold Successfully'); 
+                                        handleClosePopup();
+                                    }}/>
                             </View>
                             <View>
                                 <IconTextButton
                                     label='Trade'
                                     icon={icons.trade}
                                     containerStyle={{width: 200, marginLeft: 5, marginTop: 60}}
-                                    onPress={() => ((console.log('Trade Successfully')), handleClosePopup(), navigation.navigate('Portfolio'))}/>
+                                    onPress={() => {
+                                        console.log('Trade Successfully'); 
+                                        handleClosePopup(); 
+                                        navigation.navigate('Portfolio');
+                                    }}/>
                             </View>
                         </View>
                     </TouchableOpacity>

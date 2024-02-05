@@ -17,6 +17,12 @@ const buy = require("../assets/icons/buy.png")
 const sell = require("../assets/icons/sell.png")
 const update = require("../assets/icons/update.png")
 const change = require("../assets/icons/change.png")
+const logout = require("../assets/icons/logout.png")
+const placeOrder = require("../assets/icons/placeOrder.png")
+const editOrder = require("../assets/icons/editOrder.png")
+const cancelOrder = require("../assets/icons/cancelOrder.png")
+const retry = require("../assets/icons/retry.png")
+const back = require("../assets/icons/back.png")
 
 export default {
     briefcase,
@@ -38,4 +44,10 @@ export default {
     sell,
     update,
     change,
+    logout,
+    placeOrder,
+    editOrder,
+    cancelOrder,
+    retry,
+    back,
 }

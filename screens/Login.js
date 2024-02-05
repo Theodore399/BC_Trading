@@ -1,224 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { Main } from './';
-import { COLORS } from '../constants';
+import React, { useEffect, useState, } from 'react';
+import { View, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused
+import { IconTextButton, } from '../components';
+import { StatusBar } from 'expo-status-bar';
+import { SIZES } from '../constants';
+import { makeRedirectUri, } from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
 
-{/* Deriv API */}
-// import DerivAPIBasic from '@deriv/deriv-api/dist/DerivAPIBasic';
-import DerivAPI from '@deriv/deriv-api';
-// import derivDerivApi from 'https://cdn.skypack.dev/@deriv/deriv-api';
+WebBrowser.maybeCompleteAuthSession();
 
-const APP_ID = 52558
-const API_BASE_URL = 'https://oauth.deriv.com/oauth2/';
-const CONNETION = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+{/* Redirect Url */}
+const useProxy = Platform.select({ default: true, ios: false });
+const redirectUri = makeRedirectUri({ useProxy, native: 'trading://' });
 
-        // const api = new DerivAPI({ CONNETION });
+{/* Kraken oauth2 authentication API */}
+const krakenOAuthUrl = 'https://api.kraken.com/0/oauth2/token';
+const krakenClientId = 'AA18%N84G%FLCP%BIUY';
+const krakenRedirectUri = redirectUri;
+const krakenGrantType = 'authorization_code';
 
-
-
-// const tickStream = () => api.subscribe({ ticks: 'R_100' });
-
-
-TOKEN = '';
-USER = '';
+{/* Kraken API */}
+const krakenApiKey = 'iLcCZOjlamfdVmtD8uVlD18u9aE293fxODh2cSEXZxYSs0bGSvhC47NU';
+const krakenApiSecret = 'nG4oJPIcw1D/T+jcNw6j2tljTfVZnvNjCMs6H1shrJDdUaIrHNC2nQunGc34pgoKEMl3E6LJewa7cLKvq2xq0g==';
 
 const Login = ({ navigation }) => {
-    const [url, setUrl] = useState();
-
-    const isFocused = useIsFocused(); // Determine if the component is focused
-
-    // Add state to manage the WebView URL
-    const [webViewUrl, setWebViewUrl] = useState(''); // Initialize with an empty string
-
-    const socket = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+    {/* Kraken initial sign in page */}
+    const [url, setUrl] = useState('https://www.kraken.com/sign-in');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+  
+    const handleWebViewNavigationStateChange = async (navState) => {
+      const { url } = navState;
+  
+      if (url.includes('?error=')) {
+        const errorMessage = url.split('?error=')[1];
+        setError(`An error occurred: ${errorMessage}`);
+        setLoading(false);
+      } else if (url.includes('?code=')) {
+        const authorizationCode = url.split('?code=')[1];
+        setLoading(true);
+  
+        try {
+          const response = await fetch(krakenOAuthUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              grant_type: krakenGrantType,
+              code: authorizationCode,
+              redirect_uri: krakenRedirectUri,
+              client_id: krakenClientId,
+              client_secret: krakenApiSecret,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error('An error occurred while retrieving the access token.');
+          }
+  
+          const data = await response.json();
+          console.log(data.access_token);
+          AsyncStorage.setItem('accessToken', data.access_token);
+          setLoading(false);
+          navigation.navigate('Home');
+        } catch (error) {
+          console.log('Error:', error);
+          setError(`An error occurred: ${error.message}`);
+          setLoading(false);
+        }
+      }
+    };
+  
+    const retryAuthentication = () => {
+      setError(null);
+      setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+    };
 
     useEffect(() => {
-        checkUserToken();
-        // _openConnectionDerivApi();
-        resetWebViewUrl(); // Call this function when the component mounts
-    }, [isFocused, resetWebViewUrl]);
-
-    // Function to reset the WebView URL
-    const resetWebViewUrl = () => {
-        const params = new URLSearchParams();
-        params.append('app_id', APP_ID);
-
-        const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
-        setUrl(authorizeUrl);
-        setWebViewUrl(authorizeUrl); // Set the WebView URL to the initial login URL
-    };
-
-    // Function to check user token
-    const checkUserToken = async () => {
-        const userToken = await AsyncStorage.getItem('@UserToken:key');
-        if (userToken) {
-            console.log(userToken);
-            navigation.navigate('Home');
+      {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Home');
         } else {
-            console.log('User is not logged in');
+          console.log('User is not logged in');
+          navigation.navigate('Home');
+          //setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
         }
-    };
+      };
+      getAccessToken();
+    }, []);
 
-    const _connectionDerivApi = async (token) => {
-        const CONNETION = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
-
-        CONNETION.onopen = function (e) {
-            console.log('[open] Connection established');
-            console.log('Sending to server');
-            const sendMessage = JSON.stringify({ "authorize": token });
-            CONNETION.send(sendMessage);
-        };
-
-        let user_data ;
-    
-        CONNETION.onmessage = function (event) {
-            user_data = JSON.stringify(event.data);
-        };
-
-        await this._storeUser(user_data);
-        console.log(`[message] Data received from server: ${user_data}`);
-
-    };
-
-    const _openConnectionDerivApi = async () => {
-        socket.onopen = function (e) {
-          console.log('[open] Connection established');
-          console.log('Sending to server');
-          const sendMessage = JSON.stringify({ ping: 1 });
-          socket.send(sendMessage);
-        };
-    };
-
-    const _closeConnectionDerivApi = async () => {
-        socket.onclose = function (event) {
-          if (event.wasClean) {
-            consloe.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-          } else {
-            console.log('[close] Connection died');
-          }
-        };
-    };
-
-    _storeToken = async (token) =>  {
-        await AsyncStorage.setItem(
-            '@UserToken:key',
-            token,
-        );
-
-        return 1;
-    };
-
-    _storeUser = async (user) =>  {
-        alert(user);
-        await AsyncStorage.setItem(
-            '@UserData:key',
-            user,
-        );
-
-        return 1;
-    };
-
-    _retrieveToken = async () => {
-        const value = await AsyncStorage.getItem('@UserToken:key');
-        return value;
-    };
-
-    _retrieveUser = async () => {
-        const value = await AsyncStorage.getItem('@UserData:key');
-        return value;
-    };
-
-    const handleWebViewNavigationStateChange = (navState) => {
-        const { url } = navState;
-        const url_string = navState.url;
-        
-        if (url.includes('&token1=')) {
-            console.log(url_string);
-            const token = url_string.split('&token1=')[1].split('&')[0];
-            console.log(token);
-            this._storeToken(token);
-
-            
-
-            _connectionDerivApi(token);
-
-            // const params = new URLSearchParams();
-            // params.append('app_id', APP_ID);
-        
-            // setWebViewUrl(url); // Reset the WebView URL to the initial login URL
-
-            // resetWebViewUrl();
-            // setUrl(`${API_BASE_URL}/authorize?${params.toString()}`);
-
-            setTimeout(() => {
-                // console.log(3,user_data);
-                navigation.navigate('Home');
-            }, 1000);
-
-            // navigation.navigate('Home'); 
-        } 
-    };
-
-    function login () {
-        const params = new URLSearchParams();
-        params.append('app_id', APP_ID);
-    
-        const authorizeUrl = `${API_BASE_URL}/authorize?${params.toString()}`;
-        
-        return (
-                <WebView
-                        source={{ uri: authorizeUrl }}
-                        style={{
-                            flex: 1,
-                            marginTop: 0,
-                            marginBottom: -2170
-                        }}
-                        allowFileAccessFromFileURLs={true}
-                        domStorageEnabled={true}
-                        allowFileAccess={true}
-                        allowUniversalAccessFromFileURLs={true}
-                        originWhitelist={['*']}
-                        onShouldStartLoadWithRequest={() => true}
-                        onNavigationStateChange={handleWebViewNavigationStateChange}
-                />
-            )
-        
-    }
-
+  
     return (
-        <Main>
-            <View style={{
-                flex: 1,
-                backgroundColor: COLORS.white
-            }}>
-
-                {/* Login */}
-                {webViewUrl ? ( // Only render the WebView if webViewUrl is not empty
-                    <WebView
-                        source={{ uri: url }}
-                        style={{
-                            flex: 1,
-                            marginTop: 0,
-                            marginBottom: -2170
-                        }}
-                        allowFileAccessFromFileURLs={true}
-                        domStorageEnabled={true}
-                        allowFileAccess={true}
-                        allowUniversalAccessFromFileURLs={true}
-                        originWhitelist={['*']}
-                        onShouldStartLoadWithRequest={() => true}
-                        onNavigationStateChange={handleWebViewNavigationStateChange}
-                    />
-                ) : null}
-                
-                {/* {login()} */}
-                
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <StatusBar backgroundColor={'transparent'} style={'dark'} />
+        <View style={{ marginTop: 40, height: 700, width: SIZES.width }}>
+          {error && (
+            <View style={{ backgroundColor: 'red', padding: 10, marginBottom: 10 }}>
+              <Text style={{ color: 'black' }}>{error}</Text>
+              <IconTextButton
+                    label='Retry'
+                    icon={icons.retry}
+                    containerStyle={{flex: 1, height: 50, backgroundColor: 'red', color: 'white',}}
+                    onPress={() => {
+                        console.log('Clicked on Retry');
+                        retryAuthentication();
+                    }}/>
             </View>
-        </Main>
-    )
-}
+          )}
+          {loading && <ActivityIndicator size="large" color="blue" />}
+          <WebView
+            source={{ uri: url }}
+            style={{ flex: 1, marginTop: 0 }}
+            onNavigationStateChange={handleWebViewNavigationStateChange}
+          />
+        </View>
+      </View>
+    );
+};
 
-export default (Login);
+export default Login;

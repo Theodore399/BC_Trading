@@ -6,6 +6,10 @@ import Profile from "./Profile"
 import Currency from "./Currency"
 import Graph from "./Graph"
 import Login from "./Login"
+import Deposit from "./Deposit"
+import Withdraw from "./Withdraw"
+import Order from "./Order"
+import Asset from "./Asset"
 
 
 export {
@@ -16,5 +20,9 @@ export {
     Profile,
     Currency,
     Graph,
-    Login
+    Login,
+    Deposit,
+    Withdraw,
+    Order,
+    Asset,
 }

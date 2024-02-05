@@ -5,6 +5,7 @@ import Chart from "./Chart";
 import HeaderBar from "./HeaderBar";
 import TextButton from "./TextButton";
 import Dropdown from "./DropDown";
+import DepositMethod from './DepositMethod';
 
 export {
     TabIcon,
@@ -13,5 +14,6 @@ export {
     Chart,
     HeaderBar,
     TextButton,
-    Dropdown
+    Dropdown,
+    DepositMethod,
 }
