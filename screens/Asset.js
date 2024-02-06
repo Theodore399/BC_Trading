@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, Linking } from 'react-native';
 import { LineChart, } from 'react-native-svg-charts';
 import axios from 'axios';
 
@@ -16,10 +16,10 @@ const Asset = () => {
   const [orderBook, setOrderBook] = useState({ asks: [], bids: [] });
 
   // Fetch last 1000 trades for a given asset pair
-  const fetchLast1000Trades = async (assetPair, page = 1) => {
+  const fetchLast1000Trades = async (assetPair) => {
     try {
       const response = await axios.get(
-        `https://api.kraken.com/0/public/TradesHistory?pair=${assetPair}&count=1000&page=${page}`
+        `https://api.kraken.com/0/public/Trades?pair=${assetPair}`
       );
 
       setTrades((prevTrades) => {
@@ -94,7 +94,7 @@ const Asset = () => {
   // Fetch the list of tradable asset pairs from the Kraken API
 const fetchTradableAssetPairs = async () => {
   try {
-    const response = await axios.get(`https://api.kraken.com/0/public/AssetPairs`);
+    const response = await axios.get(`https://api.kraken.com/0/public/${assetPair}`);
     const tradableAssetPairs = Object.keys(response.data.result).filter(
       (assetPair) => response.data.result[assetPair].tradable
     );
@@ -111,7 +111,7 @@ const fetchTradableAssetPairs = async () => {
   const fetchTickerInfo = async () => {
     try {
       const response = await axios.get(
-        `https://api.kraken.com/0/public/Ticker?pair=${assets.join(',')}`
+        `https://api.kraken.com/0/public/Ticker?pair=${assetPair}`
       );
 
       const tickerInfo = assets.map((assetPair) => {
@@ -220,16 +220,19 @@ const fetchTradableAssetPairs = async () => {
     getSystemStatus();
   
     // Update the selected asset pair and page number in the URL
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-    const assetPairParam = params.get('pair');
-    const pageParam = params.get('page');
-    if (assetPairParam) {
-      setAssetPair(assetPairParam);
-    }
-    if (pageParam) {
-      setPage(parseInt(pageParam, 10));
-    }
+    Linking.addEventListener('url', (event) => {
+      const url = event.url;
+      const params = new URLSearchParams(url.search);
+      const assetPairParam = params.get('pair');
+      const pageParam = params.get('page');
+      if (assetPairParam) {
+        setAssetPair(assetPairParam);
+      }
+      if (pageParam) {
+        setPage(parseInt(pageParam, 10));
+      }
+    });
+
   }, [assetPair, page]);
   
   return (
@@ -251,7 +254,7 @@ const fetchTradableAssetPairs = async () => {
                   styles.assetPair,
                   assetPair === item && styles.assetPair,
                 ]}
-                onPress={() => assetPair(item)}
+                onPress={() => setAssetPair(item)}
               >
                 <Text style={styles.assetPairText}>{item}</Text>
               </TouchableOpacity>
