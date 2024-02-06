@@ -8,11 +8,8 @@ import Graph from "./Graph"
 import Login from "./Login"
 import Deposit from "./Deposit"
 import Withdraw from "./Withdraw"
-<<<<<<< HEAD
 import Order from "./Order"
 import Asset from "./Asset"
-=======
->>>>>>> 6b00a5bcdcd1e155ea65fd98d8f5381caa480af3
 
 
 export {
@@ -25,11 +22,7 @@ export {
     Graph,
     Login,
     Deposit,
-<<<<<<< HEAD
     Withdraw,
     Order,
     Asset,
-=======
-    Withdraw
->>>>>>> 6b00a5bcdcd1e155ea65fd98d8f5381caa480af3
 }
