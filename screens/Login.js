@@ -39,8 +39,22 @@ const fetchWithKrakenAuth = async (endpoint, payload, method = 'POST') => {
   const headers = {
     'API-Key': apiKey,
     'API-Sign': apiSign,
-    Authorization: `Bearer ${accessToken}`, // Replace with accessToken from AsyncStorage
   };
+
+  try {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    } else {
+      console.warn('Access token not found in AsyncStorage');
+      throw new Error('Access token not found in AsyncStorage');
+    }
+  } catch (error) {
+    console.error('Error retrieving access token from AsyncStorage:', error);
+    // Handle the case where the access token is not present in AsyncStorage
+    setError('Access token not found in AsyncStorage. Please log in again.');
+    navigation.navigate('Login');
+  }
 
   const url = `https://api.kraken.com/0/${endpoint}`;
 

@@ -9,8 +9,6 @@ import rootReducer from './stores/rootReducer';
 import Tabs from './navigation/tabs';
 import Home from './screens/Home';
 import Portfolio from './screens/Portfolio';
-import Trade from './screens/Currency';
-import Chart from './screens/Graph';
 import Profile from './screens/Profile';
 import Login from './screens/Login';
 import Deposit from './screens/Deposit';
@@ -33,8 +31,6 @@ const App = () => {
                     <Stack.Screen name="Main" component={Tabs}/>
                     <Stack.Screen name="Home" component={Home}/>
                     <Stack.Screen name="Portfolio" component={Portfolio}/>
-                    <Stack.Screen name="Trade" component={Trade}/>
-                    <Stack.Screen name="Chart" component={Chart}/>
                     <Stack.Screen name="Profile" component={Profile}/>
                     <Stack.Screen name="Login" component={Login}/>
                     <Stack.Screen name="Deposit" component={Deposit}/>

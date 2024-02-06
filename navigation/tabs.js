@@ -2,11 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-<<<<<<< HEAD
-import { Home, Portfolio, Graph, Currency, Profile, Login, Order, Asset } from "../screens"
-=======
-import { Home, Portfolio, Graph, Currency, Profile, Login, Withdraw, Deposit } from "../screens"
->>>>>>> 6b00a5bcdcd1e155ea65fd98d8f5381caa480af3
+import { Home, Portfolio, Withdraw, Deposit, Profile, Login, Order, Asset } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
