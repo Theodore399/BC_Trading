@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Image, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,6 +14,25 @@ const Portfolio = ({getHoldings, myHoldings}) => {
     const handleOpenPopup = () => {
         setIsVisible(true);
     };
+    useEffect(() => {
+        {/* Retrieve access token */}
+      const getAccessToken = async () => {
+        {/* Retrieving token from AsyncStorage */}
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        {/* Checking whether the token is valid */}
+        if (accessToken) {
+          console.log('User logged in successfully');
+          console.log(accessToken);
+          navigation.navigate('Portfolio');
+        } else {
+          console.log('User is not logged in');
+          setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        }
+      };
+
+      getAccessToken();
+    }, []);
+  
     const handleClosePopup = () => {
         setIsVisible(false);
     };
@@ -124,7 +143,7 @@ const Portfolio = ({getHoldings, myHoldings}) => {
                                 style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: 10,}}>
                                 {/* Buttons */}
                                 <IconTextButton
-                                    label='Double Up'
+                                    label='Copy Trade'
                                     icon={icons.doubleUp}
                                     containerStyle={{width: 130, marginRight: 5,}}
                                     onPress={() => ((console.log('Trade Closed')), handleClosePopup())}/>
