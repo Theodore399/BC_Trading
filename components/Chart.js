@@ -4,7 +4,6 @@ import { ChartDot, ChartPath, ChartPathProvider, ChartXLabel, ChartYLabel, monot
 import moment from "moment";
 import { LineChart } from 'react-native-wagmi-charts';
 import { SIZES, COLORS, FONTS } from "../constants";
-import { TradingViewWidget } from "../screens/Currency";
 
 /*const data = [
     {
