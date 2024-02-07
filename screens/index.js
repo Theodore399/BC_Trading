@@ -1,7 +1,6 @@
 import Main from "./Main"
 import Home from "./Home"
 import Portfolio from "./Portfolio"
-import Market from "./Market"
 import Profile from "./Profile"
 import Login from "./Login"
 import Deposit from "./Deposit"
@@ -14,7 +13,6 @@ export {
     Main,
     Home,
     Portfolio,
-    Market,
     Profile,
     Login,
     Deposit,
