@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { View, Animated } from 'react-native';
 import { connect } from "react-redux";
 import { IconTextButton } from "../components";
@@ -30,6 +30,13 @@ const Main = ({children, isTradeModelVisible}) => {
         outputRange: [SIZES.height, SIZES.height - 200]
     })
 
+    //const navigation = useNavigation();
+
+    {/*handleBuy = () => {
+        navigation.navigate('Currency');
+        console.log('Selected (Buy)');
+    }*/}
+
     return (
         <View
             style={{
@@ -58,12 +65,12 @@ const Main = ({children, isTradeModelVisible}) => {
                 }}
             >
                 <IconTextButton
-                    label='Close'
+                    label='Buy'
                     icon={icons.send}
                     onPress={() => console.log('Deposit')}
                 />
                 <IconTextButton
-                    label='Double Up'
+                    label='Sell'
                     icon={icons.withdraw}
                     containerStyle={{
                         marginTop: SIZES.base

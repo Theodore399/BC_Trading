@@ -11,9 +11,9 @@ const IconTextButton = ({label, icon, containerStyle, onPress}) => {
                 justifyContent: 'center',
                 height: 50,
                 borderRadius: SIZES.radius,
-                backgroundColor: COLORS.lightGray3,
+                backgroundColor: COLORS.white,
                 borderColor: COLORS.black,
-                borderWidth: 2,
+                borderWidth: 1,
                 ...containerStyle
             }}
             onPress={onPress}

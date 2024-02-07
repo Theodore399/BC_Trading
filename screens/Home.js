@@ -1,22 +1,61 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, } from 'react-native';
 import { connect } from 'react-redux';
-import { getHoldings, getCoinMarket } from '../stores/market/marketActions';
-import { useFocusEffect } from '@react-navigation/native';
-import { Main } from './';
-import { BalanceInfo, IconTextButton, Chart } from '../components';
-import { SIZES, COLORS, FONTS, dummyData, icons } from '../constants';
+import { getHoldings, getCoinMarket, } from '../stores/market/marketActions';
+import { BalanceInfo, IconTextButton, } from '../components';
+import { SIZES, COLORS, FONTS, icons, } from '../constants';
+import { WebView } from 'react-native-webview';
+import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
+const Home = ({myHoldings, navigation}) => {
 
-    const [selectedCoin, setSelectedCoin] = React.useState(null)
+    const [isMounted, setIsMounted] = useState(false);
+    const [systemStatus, setSystemStatus] = useState(null);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            getHoldings(holdings = dummyData.holdings)
-            getCoinMarket()
-        }, [])
-    )
+    useEffect(() => {
+        const checkAccessToken = async () => {
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (accessToken) {
+                console.log(accessToken);
+            } else {
+                console.log('User is not logged in');
+                //navigation.navigate('Login');
+            }
+        };
+        checkAccessToken();
+        setIsMounted(true); // Set isMounted to true after the component has finished mounting
+
+        // Get system status
+        const getSystemStatus = async () => {
+            try {
+                const response = await axios.get('https://api.kraken.com/0/public/SystemStatus');
+                setSystemStatus(response.data.result.status);
+                console.log(systemStatus);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getSystemStatus();
+    }, []);
+
+    if (!isMounted) {
+        return null; // Return null while the component is mounting
+    }
+
+    function handleView() {
+        return (
+            <WebView
+                source={{uri: 'https://coinmarketcap.com/'}}
+                style={{flex: 1, marginTop: 0, marginBottom: -56,}}
+                allowFileAccessFromFileURLs={true}
+                domStorageEnabled={true}
+                allowFileAccess={true}
+                allowUniversalAccessFromFileURLs={true}
+                originWhitelist={['*']}
+                onShouldStartLoadWithRequest={() => true}/>
+        )
+    }
 
     let totalBalance = myHoldings.reduce((a, b) => a + (b.total || 0), 0)
     let valueChange = myHoldings.reduce((a, b) => a + (b.holding_value_change_7d || 0), 0)
@@ -24,190 +63,51 @@ const Home = ({getHoldings, getCoinMarket, myHoldings, coins}) => {
 
     function renderWalletInfoSection() {
         return (
-            <View style={{
-                paddingHorizontal: SIZES.padding,
-                borderBottomLeftRadius: 25,
-                borderBottomRightRadius: 25,
-                backgroundColor: COLORS.white
-                }}
-            >
+            <View style={{paddingHorizontal: SIZES.padding, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: COLORS.black,}}>
                 {/* Balance Info */}
-                <Text 
-                    style={{
-                        marginTop: 50, 
-                        color: COLORS.lightGray3,
-                        ...FONTS.largeTitle
-                    }}
-                >Home</Text>
-
+                <Text style={{marginTop: 60, color: COLORS.white, ...FONTS.largeTitle,}}>Home</Text>
                 {/* Balance Info */}
                 <BalanceInfo
                     title="Total Balance:"
                     displayAmount={totalBalance}
                     changePct={percChange}
-                    containerStyle={{
-                        marginTop: SIZES.radius,
-                        marginBottom: SIZES.padding
-                    }}
-                />
+                    containerStyle={{marginTop: SIZES.radius, marginBottom: SIZES.padding,}}/>
                 {/* Buttons */}
-                <View style={{
-                    flexDirection: 'row',
-                    marginBottom: -25
-                    }}
-                >
+                <View style={{flexDirection: 'row', marginBottom: -25,}}>
                     <IconTextButton
                         label='Deposit'
-                        icon={icons.send}
-                        containerStyle={{
-                            flex: 1,
-                            height: 40,
-                            marginRight: SIZES.radius
-                        }}
-                        onPress={() => console.log('Deposit')}
-                    />
+                        icon={icons.deposit}
+                        containerStyle={{flex: 1, height: 40, marginRight: SIZES.radius,}}
+                        onPress={() => {
+                            console.log('Deposit page...');
+                            navigation.navigate('Deposit');
+                        }}/>
                     <IconTextButton
                         label='Withdraw'
                         icon={icons.withdraw}
-                        containerStyle={{
-                            flex: 1,
-                            height: 40
-                        }}
-                        onPress={() => console.log('Withdraw')}
-                    />
+                        containerStyle={{flex: 1, height: 40,}}
+                        onPress={() => {
+                            console.log('Withdraw page...');
+                            navigation.navigate('Withdraw');
+                        }}/>
                 </View>
             </View>
         )
     }
 
     return (
-        <Main>
-            <View style={{
-                flex: 1,
-                backgroundColor: COLORS.black
-            }}>
-                {/* Header - Wallet Info */}
-                {renderWalletInfoSection()}
-
-                {/* Chart */}
-                <Chart 
-                    containerStyle={{
-                        marginTop:  SIZES.padding * 2
-                    }}
-                    chartPrices={selectedCoin ? selectedCoin?.sparkline_in_7d?.price : coins[0]?.sparkline_in_7d?.price}
-                />
-
-                {/* Top Popular Cryptocurrency */}
-                <FlatList
-                    data={coins}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={{
-                        marginTop: 30,
-                        paddingHorizontal: SIZES.padding
-                    }}
-                    ListHeaderComponent={
-                        <View style={{marginBottom: SIZES.radius}}>
-                            <Text style={{
-                                color:COLORS.white, 
-                                ...FONTS.h3, 
-                                fontSize: 18
-                                }}
-                            >Popular Cryptocurrencies</Text>
-                        </View>
-                    }
-                    renderItem={({item}) => {
-
-                        let priceColor = (item.
-                            price_change_percentage_7d_in_currency == 0)
-                            ? COLORS.lightGray3 : (item.
-                                price_change_percentage_7d_in_currency > 0)
-                                ? COLORS.lightGreen : COLORS.red
-
-                        return (
-                            <TouchableOpacity 
-                                style={{
-                                    height: 55,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                                onPress={() => setSelectedCoin(item)}
-                            >
-                                {/* Logo */}
-                                <View style={{width: 35}}>
-                                    <Image
-                                        source={{uri: item.image}}
-                                        style={{
-                                            height: 20,
-                                            width: 20
-                                        }}/>
-                                </View>
-
-                                {/* Name */}
-                                <View style={{flex: 1}}>
-                                    <Text 
-                                        style={{
-                                            color: COLORS.white,
-                                            ...FONTS.h3
-                                        }}>{item.name}
-                                    </Text>
-                                </View>
-
-                                {/* Figures */}
-                                <View>
-                                    <Text style={{
-                                        textAlign: 'right',
-                                        color: COLORS.white,
-                                        ...FONTS.h5,
-                                        lineHeight: 15
-                                        }}
-                                    >$ {item.current_price}</Text>
-                                    <View 
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-end'
-                                        }}
-                                    >
-                                        {
-                                            item.price_change_percentage_7d_in_currency != 0 &&
-                                            <Image
-                                                source={icons.upArrow}
-                                                style={{
-                                                    height: 10,
-                                                    width: 10,
-                                                    tintColor: priceColor,
-                                                    transform: item.price_change_percentage_7d_in_currency > 0 ? [{rotate: '45deg'}] : [{rotate: '125deg'}]
-                                                }}
-                                            />
-                                        }
-                                        <Text
-                                            style={{
-                                                marginLeft: 5,
-                                                color: priceColor,
-                                                ...FONTS.body5,
-                                                lineHeight: 15
-                                            }}
-                                        >{item.price_change_percentage_7d_in_currency.toFixed(2)}%</Text>
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )
-                    }}
-                    ListFooterComponent={
-                        <View
-                            style={{
-                                marginBottom: 50
-                            }}
-                        />
-                    }
-                />
+        <View style={{flex: 1, backgroundColor: COLORS.black,}}>
+            {/* Status Bar */}
+            <StatusBar backgroundColor={"black"} style="light"/>
+            {/* Header - Wallet Info */}
+            {renderWalletInfoSection()}
+            {/* Trading View */}
+            <View style={{marginTop: 30, marginBottom: 80, height: 367, width: SIZES.width,}}>
+                {handleView()}
             </View>
-        </Main>
+        </View>
     )
 }
-
-// export default Home;
 
 function mapStateToProps(state) {
     return {

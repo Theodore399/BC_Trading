@@ -5,7 +5,7 @@ import moment from "moment";
 import { LineChart } from 'react-native-wagmi-charts';
 import { SIZES, COLORS, FONTS } from "../constants";
 
-const data = [
+/*const data = [
     {
       timestamp: 1625945400000,
       value: 33575.25,
@@ -22,13 +22,31 @@ const data = [
       timestamp: 1625948100000,
       value: 33215.25,
     },
-];
+];*/
 
-function Chart () {
+const Chart = ({containerStyle, chartPrices}) => {
 
+    let data = [
+        {
+          timestamp: 1625945400000,
+          value: 33575.25,
+        },
+        {
+          timestamp: 1625946300000,
+          value: 33545.25,
+        },
+        {
+          timestamp: 1625947200000,
+          value: 33510.25,
+        },
+        {
+          timestamp: 1625948100000,
+          value: 33215.25,
+        },
+    ];
     // Points
-    //let startUnixTimeStamp = moment().subtract(7, 'day').unix()
-    /*let data = chartPrices ? chartPrices?.map((item, index) => {
+    /*let startUnixTimeStamp = moment().subtract(7, 'day').unix()
+    let data = chartPrices ? chartPrices?.map((item, index) => {
         return {
             x: startUnixTimeStamp + (index + 1) * 3600,
             y: item
@@ -41,7 +59,7 @@ function Chart () {
         <View 
             marginTop={40} 
             backgroundColor={COLORS.lightGray3} 
-            borderRadius={25} 
+            borderRadius={25}
             height={200} 
             borderColor={COLORS.black}
             borderWidth={1}

@@ -8,7 +8,9 @@ const HeaderBar = ({title}) => {
             style={{
                 height: 100,
                 paddingHorizontal: SIZES.radius,
-                justifyContent: 'flex-end'
+                justifyContent: 'flex-end',
+                marginTop: 13,
+                marginLeft: 12
             }}
         >
             <Text

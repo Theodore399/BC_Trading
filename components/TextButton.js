@@ -11,14 +11,16 @@ const TextButton = ({label, containerStyle, onPress}) => {
                 paddingVertical: 3,
                 paddingHorizontal: 10,
                 borderRadius: 15,
-                backgroundColor: COLORS.gray1,
+                backgroundColor: COLORS.white,
+                borderWidth: 1,
                 ...containerStyle
             }}
         >
             <Text
                 style={{
-                    color: COLORS.white,
-                    ...FONTS.h3
+                    color: COLORS.black,
+                    ...FONTS.h3,
+                    marginTop: 3
                 }}>{label}</Text>
         </TouchableOpacity>
     )
