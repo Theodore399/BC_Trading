@@ -15,6 +15,7 @@ import Deposit from './screens/Deposit';
 import Withdraw from './screens/Withdraw';
 import Order from './screens/Order';
 import Asset from './screens/Asset';
+import Account from './screens/Account';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,7 @@ const App = () => {
                     <Stack.Screen name="Withdraw" component={Withdraw}/>
                     <Stack.Screen name="Order" component={Order}/>
                     <Stack.Screen name="Asset" component={Asset}/>
+                    <Stack.Screen name="Account" component={Account}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </Provider>

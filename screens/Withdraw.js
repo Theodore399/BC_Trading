@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { IconTextButton } from '../components';
+import { COLORS, FONTS, SIZES, icons } from '../constants';
 import axios from 'axios';
-import { COLORS, icons } from '../constants';
 
 const Withdraw = ({ navigation }) => {
   const [selectedAsset, setSelectedAsset] = useState('');
@@ -175,18 +175,19 @@ const Withdraw = ({ navigation }) => {
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
       <View style={{ padding: 20 }}>
-        <IconTextButton
-          label='Back'
-          icon={icons.back}
-          containerStyle={{ flex: 1, height: 50, backgroundColor: 'red', color: 'white', marginBottom: 20 }}
-          onPress={() => {
-            console.log('Back...');
-            navigation.goBack();
-          }}
-        />
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Withdraw</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc', marginTop: 30,}}>
+          <IconTextButton
+            icon={icons.back}
+            containerStyle={{height: 30, backgroundColor: 'white', color: 'black',}}
+            onPress={() => {
+              console.log('Back...');
+              navigation.goBack();
+          }}/>
+          <Text style={{fontSize: 20, fontWeight: 'bold',}}>Withdraw</Text>
+          <Text style={{fontSize: 14, color: 'green',}}>{systemStatus}</Text>
+        </View>
         <TextInput
-          style={{ marginTop: 20, borderBottomWidth: 1, borderBottomColor: COLORS.gray, paddingBottom: 10 }}
+          style={{ marginTop: 20, borderWidth: 1, borderColor: COLORS.gray, padding: 5, borderRadius: SIZES.radius, }}
           placeholder="Enter asset (ex. 'BTC', 'ETH', 'LTC', 'BCH', etc...)"
           onChangeText={setSelectedAsset}
           value={selectedAsset}

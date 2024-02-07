@@ -14,31 +14,48 @@ const Asset = () => {
   const [assetPair, setAssetPair] = useState('XXBTZUSD');
   const [page, setPage] = useState(1);
   const [orderBook, setOrderBook] = useState({ asks: [], bids: [] });
+  const [tickerInfo, setTickerInfo] = useState(null);
 
   // Fetch last 1000 trades for a given asset pair
-  const fetchLast1000Trades = async (assetPair) => {
-    try {
-      const response = await axios.get(
-        `https://api.kraken.com/0/public/Trades?pair=${assetPair}`
-      );
+const fetchLast1000Trades = async (assetPair) => {
+  try {
+    const response = await axios.get(
+      `https://api.kraken.com/0/public/Trades`,
+      {
+        params: {
+          pair: assetPair,
+          since: Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 7, // 1 week of data
+          count: 1000,
+        },
+      }
+    );
 
-      setTrades((prevTrades) => {
-        const newTrades = [...prevTrades, ...response.data.result[assetPair].trades];
-        return newTrades;
+    if (response.data.result[assetPair]) {
+      const newTrades = response.data.result[assetPair].reverse().map((trade) => {
+        const [price, volume, time, type, side, orderType, misc] = trade;
+        return {
+          price,
+          volume,
+          time,
+          side,
+          type,
+          orderType,
+          misc,
+        };
       });
 
+      setTrades((prevTrades) => [...prevTrades, ...newTrades]);
       setLoading(false);
-    } catch (error) {
-      if (error.response && error.response.status === 429) {
-        // Handle rate limiting
-        setError('Rate limiting exceeded.');
-      } else {
-        // Handle other errors
-        setError(error.message);
-      }
+    } else {
+      setError('Error: Trades not found for this asset pair.');
       setLoading(false);
     }
-  };
+  } catch (error) {
+    console.log(error);
+    setError(error.message);
+    setLoading(false);
+  }
+};
 
   // Retrieve the next page of trades
   const handleEndReached = () => {
@@ -91,55 +108,85 @@ const Asset = () => {
     );
   };
 
-  // Fetch the list of tradable asset pairs from the Kraken API
+  // Fetch list of tradable asset pairs from the Kraken API
 const fetchTradableAssetPairs = async () => {
   try {
-    const response = await axios.get(`https://api.kraken.com/0/public/${assetPair}`);
-    const tradableAssetPairs = Object.keys(response.data.result).filter(
-      (assetPair) => response.data.result[assetPair].tradable
+    const response = await axios.get(
+      `https://api.kraken.com/0/public/AssetPairs`,
+      {
+        params: {
+          info: 1,
+        },
+      }
     );
-    setAssets(tradableAssetPairs);
-    setLoading(false);
+
+    if (response.data.result) {
+      const tradableAssetPairs = Object.keys(response.data.result).filter(
+        (assetPair) => response.data.result[assetPair].tradable
+      );
+
+      setAssets(tradableAssetPairs);
+      setLoading(false);
+    } else {
+      console.log('Error:', response.data.error);
+      setError('Error: Failed to fetch list of tradable asset pairs.');
+      setLoading(false);
+    }
   } catch (error) {
-    console.log(error);
-    setError(error.message);
+    console.log('Error:', error.message);
+    setError('Error: Failed to fetch list of tradable asset pairs.');
     setLoading(false);
   }
 };
 
-  // Fetch ticker information for a given list of asset pairs
-  const fetchTickerInfo = async () => {
-    try {
-      const response = await axios.get(
-        `https://api.kraken.com/0/public/Ticker?pair=${assetPair}`
-      );
+  // Fetch ticker information for a given asset pair
+const fetchTickerInfo = async (assetPair) => {
+  try {
+    const response = await axios.get(
+      `https://api.kraken.com/0/public/Ticker`,
+      {
+        params: {
+          pair: assetPair,
+        },
+      }
+    );
 
-      const tickerInfo = assets.map((assetPair) => {
-        const tickerData = response.data.result[assetPair];
-        return {
-          assetPair,
-          ask: tickerData.a[0],
-          bid: tickerData.b[0],
-          lastTrade: tickerData.c[0],
-          volume: tickerData.v,
-        };
-      });
+    if (response.data.result[assetPair]) {
+      const tickerInfo = {
+        ask: response.data.result[assetPair].a[0],
+        bid: response.data.result[assetPair].b[0],
+        lastTrade: response.data.result[assetPair].c[0],
+        volume: response.data.result[assetPair].v,
+      };
 
-      setAssets(tickerInfo);
+      setTickerInfo(tickerInfo);
       setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError(error.message);
+    } else {
+      setError('Error: Failed to fetch ticker information for this asset pair.');
       setLoading(false);
     }
-  };
-  // Fetch OHLC data for a given asset pair
-  const fetchOHLCData = async (assetPair) => {
-    try {
-      const response = await axios.get(
-        `https://api.kraken.com/0/public/OHLC?pair=${assetPair}`
-      );
+  } catch (error) {
+    console.log(error);
+    setError('Error: Failed to fetch ticker information for this asset pair.');
+    setLoading(false);
+  }
+};
 
+// Fetch OHLC data for a given asset pair
+const fetchOHLCData = async (assetPair) => {
+  try {
+    const response = await axios.get(
+      `https://api.kraken.com/0/public/OHLC`,
+      {
+        params: {
+          pair: assetPair,
+          interval: '1', // 1 day interval
+          since: Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 7, // 1 week of data
+        },
+      }
+    );
+
+    if (response.data.result[assetPair]) {
       const ohlcData = response.data.result[assetPair].map((ohlc) => {
         const [time, open, high, low, close, vwap, volume, count] = ohlc;
         return {
@@ -156,12 +203,16 @@ const fetchTradableAssetPairs = async () => {
 
       setOhlcData(ohlcData);
       setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError(error.message);
+    } else {
+      setError('Error: OHLC data not found for this asset pair.');
       setLoading(false);
     }
-  };
+  } catch (error) {
+    console.log(error);
+    setError(error.message);
+    setLoading(false);
+  }
+};
 
   // Fetch order book details for a given asset pair
   const fetchOrderBook = async (assetPair) => {
@@ -205,7 +256,7 @@ const fetchTradableAssetPairs = async () => {
     fetchTradableAssetPairs();
   
     // Fetch ticker information for a given list of asset pairs
-    fetchTickerInfo();
+    fetchTickerInfo(assetPair);
   
     // Fetch OHLC data for the selected asset pair
     fetchOHLCData(assetPair);
@@ -214,7 +265,7 @@ const fetchTradableAssetPairs = async () => {
     fetchOrderBook(assetPair);
   
     // Fetch the last 1000 trades for the selected asset pair
-    fetchLast1000Trades(assetPair, page);
+    fetchLast1000Trades(assetPair);
   
     // Fetch the system status from the Kraken API
     getSystemStatus();
@@ -233,7 +284,7 @@ const fetchTradableAssetPairs = async () => {
       }
     });
 
-  }, [assetPair, page]);
+  }, [assetPair]);
   
   return (
     <View style={styles.container}>
@@ -241,86 +292,82 @@ const fetchTradableAssetPairs = async () => {
         <Text style={styles.title}>Kraken Asset Tracker</Text>
         <Text style={styles.systemStatus}>{systemStatus}</Text>
       </View>
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {error && <Text style={{ color: "red" }}>{error}</Text>}
       <View style={styles.content}>
-        {loading && <ActivityIndicator size="large" color="#0000ff" />}
-        {error && <Text style={{ color: "red" }}>{error}</Text>}
+        {/* Display the list of tradable asset pairs */}
         <View style={styles.tradableAssetPairs}>
           <Text style={styles.subtitle}>Tradable Asset Pairs</Text>
           <FlatList
             data={assets}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.assetPair,
-                  assetPair === item && styles.assetPair,
-                ]}
-                onPress={() => setAssetPair(item)}
-              >
-                <Text style={styles.assetPairText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-          />
-        </View>
-        <View style={styles.chart}>
-          <Text style={styles.subtitle}>OHLC Data</Text>
-          <LineChart
-            data={ohlcData}
-            width={screenWidth - 40}
-            height={250}
-            yAxisLabel="$"
-            gridMin={0}
-            yAxisSuffix="k"
-            formatYLabel={(y) => `${y}k`}
-            style={{ marginVertical: 10 }}
-          />
-        </View>
-        <View style={styles.trades}>
-          <Text style={styles.subtitle}>Last 1000 Trades</Text>
-          <FlatList
-            data={trades}
-            renderItem={({ item }) => (
-              <View style={styles.trade}>
-                <Text style={styles.tradeText}>
-                  {item.price} {item.volume} {item.time} {item.side} {item.type} {item.misc}
-                </Text>
-              </View>
-            )}
-            keyExtractor={(item) => item.id}
-            onEndReached={() => handleEndReached()}
+            renderItem={renderAsset}
+            keyExtractor={keyExtractor}
+            onEndReached={handleEndReached}
             onEndReachedThreshold={0.5}
           />
         </View>
+        {/* Display the OHLC chart for the selected asset pair */}
+        <View style={styles.chart}>
+          <Text style={styles.subtitle}>OHLC Data</Text>
+          {ohlcData && (
+            <LineChart
+              data={ohlcData}
+              width={screenWidth - 40}
+              height={250}
+              yAxisLabel="$"
+              gridMin={0}
+              yAxisSuffix="k"
+              formatYLabel={(y) => `${y}k`}
+              style={{ marginVertical: 10 }}
+            />
+          )}
+        </View>
+        {/* Display the ticker information for the selected asset pair */}
+        <View style={styles.tickerInfo}>
+          {tickerInfo && (
+            <>
+              <Text style={styles.tickerText}>Ask: {tickerInfo.ask}</Text>
+              <Text style={styles.tickerText}>Bid: {tickerInfo.bid}</Text>
+              <Text style={styles.tickerText}>Last Trade: {tickerInfo.lastTrade}</Text>
+              <Text style={styles.tickerText}>Volume: {tickerInfo.volume}</Text>
+            </>
+          )}
+        </View>
+        {/* Display the order book for the selected asset pair */}
         <View style={styles.orderBook}>
           <Text style={styles.subtitle}>Order Book</Text>
           <View style={styles.orderBookBids}>
             <Text style={styles.orderBookLabel}>Bids</Text>
             <FlatList
               data={orderBook.bids}
-              renderItem={({ item }) => (
-                <View style={styles.orderBookItem}>
-                  <Text style={styles.orderBookText}>
-                    {item.price} {item.volume}
-                  </Text>
-                </View>
-              )}
+              renderItem={renderOrder}
               keyExtractor={(item) => item.price.toString()}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
           <View style={styles.orderBookAsks}>
             <Text style={styles.orderBookLabel}>Asks</Text>
             <FlatList
               data={orderBook.asks}
-              renderItem={({ item }) => (
-                <View style={styles.orderBookItem}>
-                  <Text style={styles.orderBookText}>
-                    {item.price} {item.volume}
-                  </Text>
-                </View>
-              )}
+              renderItem={renderOrder}
               keyExtractor={(item) => item.price.toString()}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
+        </View>
+        {/* Display the last 1000 trades for the selected asset pair */}
+        <View style={styles.trades}>
+          <Text style={styles.subtitle}>Last 1000 Trades</Text>
+          <FlatList
+            data={trades}
+            renderItem={renderTrade}
+            keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
+            showsVerticalScrollIndicator={false}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+          />
         </View>
       </View>
     </View>
@@ -338,6 +385,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    marginTop: 30,
   },
   title: {
     fontSize: 20,
@@ -402,6 +450,14 @@ const styles = StyleSheet.create({
   },
   orderBookText: {
     fontSize: 12,
+  },
+  tickerInfo: {
+    marginVertical: 10,
+  },
+  tickerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 });
 

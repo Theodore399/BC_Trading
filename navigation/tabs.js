@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { connect } from "react-redux";
 import { setTradeModelVisibility } from "../stores/tab/tabActions";
-import { Home, Portfolio, Withdraw, Deposit, Profile, Login, Order, Asset } from "../screens"
+import { Home, Portfolio, Withdraw, Deposit, Profile, Login, Order, Asset, Account } from "../screens"
 import { TabIcon } from '../components';
 import { COLORS, icons } from "../constants"
 
@@ -68,8 +68,8 @@ const Tabs = () => {
                 }}
             />
             <Tab.Screen
-                name="Graph"
-                component={Graph}
+                name="Account"
+                component={Account}
                 options={{
                     tabBarIcon: ({focused}) => {
                         return (

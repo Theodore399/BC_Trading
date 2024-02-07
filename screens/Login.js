@@ -4,17 +4,16 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconTextButton, } from '../components';
 import { StatusBar } from 'expo-status-bar';
+import axios from 'axios';
 import { SIZES } from '../constants';
 import { makeRedirectUri, } from 'expo-auth-session';
-import axios from 'axios';
-import * as crypto from 'crypto';
 
 {/* Kraken API */}
 const krakenApiKey = 'iLcCZOjlamfdVmtD8uVlD18u9aE293fxODh2cSEXZxYSs0bGSvhC47NU';
 const krakenApiSecret = 'nG4oJPIcw1D/T+jcNw6j2tljTfVZnvNjCMs6H1shrJDdUaIrHNC2nQunGc34pgoKEMl3E6LJewa7cLKvq2xq0g==';
 const krakenOAuthUrl = 'https://api.kraken.com/0/oauth2/token';
 const krakenClientId = 'AA18%N84G%FLCP%BIUY';
-const krakenRedirectUri = makeRedirectUri({ useProxy, native: 'trading://' });
+const krakenRedirectUri = makeRedirectUri({ native: 'trading://' });
 const krakenGrantType = 'authorization_code';
 
 // Generate API-Sign
@@ -148,7 +147,8 @@ const Login = ({ navigation }) => {
         navigation.navigate('Home');
       } else {
         console.log('User is not logged in');
-        setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
+        navigation.navigate('Home');
+        //setUrl(`https://api.kraken.com/0/oauth2/authorize?client_id=${krakenClientId}&response_type=code&redirect_uri=${krakenRedirectUri}&scope=public%20private`);
       }
     };
 

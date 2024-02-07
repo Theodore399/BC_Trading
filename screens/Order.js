@@ -37,24 +37,59 @@ const Order = () => {
     try {
       // Validate the input
       validateInput();
+  
+      // Generate a nonce value
       const nonce = Date.now();
-      const postData = `pair=${pair}&type=${type}&ordertype=limit&price=${price}&volume=${volume}`;
+  
+      // Create the request body schema
+      const requestBody = {
+        nonce,
+        userref: 12345, // replace with a user reference value
+        orderType: 'limit',
+        type: type,
+        volume: volume,
+        displayvol: volume, // replace with the display volume value
+        pair: pair,
+        price: price,
+        price2: null, // replace with the value for price2 if applicable
+        trigger: null, // replace with the value for trigger if applicable
+        leverage: null, // replace with the value for leverage if applicable
+        reduce_only: false, // replace with the value for reduce_only if applicable
+        stptype: null, // replace with the value for stptype if applicable
+        oflags: null, // replace with the value for oflags if applicable
+        timeinforce: null, // replace with the value for timeinforce if applicable
+        starttm: null, // replace with the value for starttm if applicable
+        expiretm: null, // replace with the value for expiretm if applicable
+        close: {
+          ordertype: null, // replace with the value for close order type if applicable
+          price: null, // replace with the value for close price if applicable
+          price2: null, // replace with the value for close price2 if applicable
+        },
+        deadline: null, // replace with the value for deadline if applicable
+        validate: true,
+      };
+  
+      // Generate the API signature
       const signature = crypto
         .createHmac('sha512', krakenApiSecret)
-        .update(nonce + postData)
+        .update(nonce + JSON.stringify(requestBody))
         .digest('hex');
-
-      const response = await axios.post('https://api.kraken.com/0/private/AddOrder', `nonce=${nonce}&${postData}`, {
+  
+      // Send the request to the Kraken API
+      const response = await axios.post('https://api.kraken.com/0/private/AddOrder', requestBody, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'API-Key': krakenApiKey,
           'API-Sign': signature,
         },
       });
+  
+      // Process the response from the Kraken API
       const data = response.data;
       setResponse(JSON.stringify(data, null, 2));
       setSuccess('Order placed successfully');
     } catch (error) {
+      // Handle any errors that occur during the request
       if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
         // Network error or timeout
         setNetworkError('Network error or timeout');
@@ -87,34 +122,57 @@ const Order = () => {
   };
 
   const editOrder = async (orderId) => {
-    // Validate the orderId input
-    if (!/^[0-9]+$/.test(orderId)) {
-      setOrderIdError('Invalid order ID');
-      return;
-    }
-
     setLoading(true);
     try {
+      // Validate the orderId input
+      if (!/^[0-9]+$/.test(orderId)) {
+        setOrderIdError('Invalid order ID');
+        return;
+      }
+  
       // Validate the input
       validateInput();
+  
+      // Generate a nonce value
       const nonce = Date.now();
-      const postData = `pair=${pair}&type=${type}&ordertype=limit&price=${price}&volume=${volume}`;
+  
+      // Create the request body schema
+      const requestBody = {
+        nonce,
+        userref: 12345, // replace with a user reference value
+        txid: orderId,
+        volume: volume,
+        displayvol: volume, // replace with the display volume value
+        pair: pair,
+        price: price,
+        price2: null, // replace with the value for price2 if applicable
+        oflags: null, // replace with the value for oflags if applicable
+        deadline: null, // replace with the value for deadline if applicable
+        cancel_response: null, // replace with the value for cancel_response if applicable
+        validate: true,
+      };
+  
+      // Generate the API signature
       const signature = crypto
         .createHmac('sha512', krakenApiSecret)
-        .update(nonce + postData)
+        .update(nonce + JSON.stringify(requestBody))
         .digest('hex');
-
-      const response = await axios.post('https://api.kraken.com/0/private/EditOrder', `nonce=${nonce}&${postData}`, {
+  
+      // Send the request to the Kraken API
+      const response = await axios.post('https://api.kraken.com/0/private/EditOrder', requestBody, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'API-Key': krakenApiKey,
           'API-Sign': signature,
         },
       });
+  
+      // Process the response from the Kraken API
       const data = response.data;
       setResponse(JSON.stringify(data, null, 2));
-      setSuccess('Order placed successfully');
+      setSuccess('Order edited successfully');
     } catch (error) {
+      // Handle any errors that occur during the request
       if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
         // Network error or timeout
         setNetworkError('Network error or timeout');
@@ -131,41 +189,50 @@ const Order = () => {
         // Something happened in setting up the request that triggered an Error
         setResponse(`Error: ${error.message}`);
       }
-      setFailure('Failed to place the order');
+      setFailure('Failed to edit the order');
     } finally {
       setLoading(false);
     }
   };
 
   const cancelOrder = async (orderId) => {
-    // Validate the orderId input
-    if (!/^[0-9]+$/.test(orderId)) {
-      setOrderIdError('Invalid order ID');
-      return;
-    }
-
     setLoading(true);
     try {
-      // Validate the input
-      validateInput();
+      // Validate the orderId input
+      if (!/^[0-9]+$/.test(orderId)) {
+        setOrderIdError('Invalid order ID');
+        return;
+      }
+  
+      // Generate a nonce value
       const nonce = Date.now();
-      const postData = `pair=${pair}&type=${type}&ordertype=limit&price=${price}&volume=${volume}`;
+  
+      // Create the request body schema
+      const requestBody = new URLSearchParams();
+      requestBody.append('nonce', nonce);
+      requestBody.append('txid', orderId);
+  
+      // Generate the API signature
       const signature = crypto
         .createHmac('sha512', krakenApiSecret)
-        .update(nonce + postData)
+        .update(nonce + orderId)
         .digest('hex');
-
-      const response = await axios.post('https://api.kraken.com/0/private/CancelOrder', `nonce=${nonce}&${postData}`, {
+  
+      // Send the request to the Kraken API
+      const response = await axios.post('https://api.kraken.com/0/private/CancelOrder', requestBody, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'API-Key': krakenApiKey,
           'API-Sign': signature,
         },
       });
+  
+      // Process the response from the Kraken API
       const data = response.data;
       setResponse(JSON.stringify(data, null, 2));
-      setSuccess('Order placed successfully');
+      setSuccess('Order cancelled successfully');
     } catch (error) {
+      // Handle any errors that occur during the request
       if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
         // Network error or timeout
         setNetworkError('Network error or timeout');
@@ -182,7 +249,7 @@ const Order = () => {
         // Something happened in setting up the request that triggered an Error
         setResponse(`Error: ${error.message}`);
       }
-      setFailure('Failed to place the order');
+      setFailure('Failed to cancel the order');
     } finally {
       setLoading(false);
     }
@@ -191,26 +258,34 @@ const Order = () => {
   const cancelAllOrders = async () => {
     setLoading(true);
     try {
-      // Validate the input
-      validateInput();
+      // Generate a nonce value
       const nonce = Date.now();
-      const postData = `pair=${pair}&type=${type}&ordertype=limit&price=${price}&volume=${volume}`;
+  
+      // Create the request body schema
+      const requestBody = new URLSearchParams();
+      requestBody.append('nonce', nonce);
+  
+      // Generate the API signature
       const signature = crypto
         .createHmac('sha512', krakenApiSecret)
-        .update(nonce + postData)
+        .update(nonce)
         .digest('hex');
-
-      const response = await axios.post('https://api.kraken.com/0/private/CancelAll', `nonce=${nonce}&${postData}`, {
+  
+      // Send the request to the Kraken API
+      const response = await axios.post('https://api.kraken.com/0/private/CancelAllOrders', requestBody, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'API-Key': krakenApiKey,
           'API-Sign': signature,
         },
       });
+  
+      // Process the response from the Kraken API
       const data = response.data;
       setResponse(JSON.stringify(data, null, 2));
-      setSuccess('Order placed successfully');
+      setSuccess('All orders cancelled successfully');
     } catch (error) {
+      // Handle any errors that occur during the request
       if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
         // Network error or timeout
         setNetworkError('Network error or timeout');
@@ -227,7 +302,7 @@ const Order = () => {
         // Something happened in setting up the request that triggered an Error
         setResponse(`Error: ${error.message}`);
       }
-      setFailure('Failed to place the order');
+      setFailure('Failed to cancel all orders');
     } finally {
       setLoading(false);
     }

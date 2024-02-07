@@ -10,13 +10,14 @@ const API_PATH_GET_ORDER_INFO = '/private/QueryOrders';
 const API_PATH_TRADES_HISTORY = '/private/TradesHistory';
 
 const getKrakenAuthHeaders = (apiKey, apiSecret) => {
-  const nonce = Date.now().toString();
-  const message = `${nonce} ${API_PATH}`;
-  const secretBuffer = Buffer.from(apiSecret, 'base64');
-  const hmac = Buffer.from(require('crypto').createHmac('sha256', secretBuffer).update(message).digest(), 'base64');
+  // Generate the API signature
+  const signature = crypto
+  .createHmac('sha512', apiSecret)
+  .update(nonce + JSON.stringify(requestBody))
+  .digest('hex');
   return {
     'API-Key': apiKey,
-    'API-Sign': `${hmac}:${nonce}`,
+    'API-Sign': signature,
   };
 };
 
